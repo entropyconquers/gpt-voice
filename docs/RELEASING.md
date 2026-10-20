@@ -1,6 +1,7 @@
 # Releasing GPT Voice
 
-A public direct-download release uses **Developer ID Application** signing and Apple notarization.
+A notarized direct-download release uses **Developer ID Application** signing and Apple notarization.
+See the unnotarized release section below for the disclosed v0.1.4 exception.
 An App Store Connect app record, TestFlight build and App Store listing are not required.
 
 ## Build
@@ -38,6 +39,8 @@ python3 -m venv .local/release-tools
 
 The script requires a valid Developer ID signature, a stapled ticket and a passing Gatekeeper assessment.
 It creates the themed Finder disk image with an Applications link.
+It mounts the result and checks every architecture signature and executable before marking the package ready.
+Do not add Finder metadata to the app after signing. In particular, hiding its filename extension can invalidate strict signature checks.
 `--preview` permits an explicitly unnotarized local preview. It does not mark the result as verified.
 
 Sign the DMG with Developer ID, submit it for notarization, and staple the accepted ticket.
@@ -63,3 +66,13 @@ Attach `GPT-Voice.dmg`, an app ZIP, checksums, release notes and the promo MP4 t
 The website's download link must point to the uploaded release asset.
 Update the README, website and launch drafts to the same version and verified release status.
 Keep signing keys, credentials and local capture logs out of Git.
+
+## Explicitly disclosed unnotarized releases
+
+The v0.1.4 public download is authorized as an unnotarized build while Developer ID access is unavailable.
+It has a valid, stable Apple Development signature. It is not a notarized or Gatekeeper-approved release.
+
+Use `scripts/package-dmg.py --unnotarized` only when the website, README, and release notes state this limit.
+This mode requires a certificate signature and records `notarized_app_verified: false` in the packaging report.
+Do not label it verified or advise users to disable Gatekeeper.
+The normal packaging mode continues to require Developer ID signing, a stapled ticket, and Gatekeeper acceptance.

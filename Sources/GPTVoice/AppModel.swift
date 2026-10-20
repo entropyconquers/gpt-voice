@@ -8,13 +8,14 @@ import ServiceManagement
 @MainActor
 final class AppModel: NSObject, ObservableObject {
     let preferences: AppPreferences
+    let history: TranscriptionHistory
 
     @Published private(set) var phase: DictationPhase = .idle
     @Published private(set) var connection: ConnectionStatus = .checking
     @Published private(set) var cliAvailable = CodexAuthentication.cliAvailable
     @Published private(set) var authError: String?
     @Published private(set) var microphone = PermissionStatus(AudioCapture.microphoneStatus)
-    @Published private(set) var accessibilityTrusted = AXIsProcessTrusted()
+    @Published private(set) var accessibilityTrusted = AccessibilityPermission.check()
     @Published private(set) var hotkeyError: String?
     /// True when the last shortcut failed because a macOS shortcut, such as Spotlight, owns it.
     @Published private(set) var hotkeyBlockedBySystem = false
@@ -45,10 +46,12 @@ final class AppModel: NSObject, ObservableObject {
     static let installCodexURL = URL(string: "https://developers.openai.com/codex/cli/")!
 
     init(preferences: AppPreferences? = nil, pasteboard: NSPasteboard? = nil,
+         history: TranscriptionHistory? = nil,
          transcribeAudio: @escaping @Sendable (URL) async throws -> String = {
              try await TranscriptionClient().transcribe(file: $0)
          }) {
         self.preferences = preferences ?? AppPreferences()
+        self.history = history ?? TranscriptionHistory()
         self.transcribeAudio = transcribeAudio
         audio = AudioCapture()
         paste = PasteCoordinator(pasteboard: pasteboard ?? .general)
@@ -100,7 +103,7 @@ final class AppModel: NSObject, ObservableObject {
         cliAvailable = CodexAuthentication.cliAvailable
         if signInTask == nil { connection = ConnectionStatus.current() }
         microphone = PermissionStatus(AudioCapture.microphoneStatus)
-        accessibilityTrusted = AXIsProcessTrusted()
+        accessibilityTrusted = AccessibilityPermission.check()
         launchAtLogin = LaunchAtLoginStatus.current()
         recheckPermissionsAfterReturn()
     }
@@ -114,7 +117,7 @@ final class AppModel: NSObject, ObservableObject {
                 do { try await Task.sleep(nanoseconds: delay) } catch { return }
                 guard let self, !Task.isCancelled else { return }
                 let microphone = PermissionStatus(AudioCapture.microphoneStatus)
-                let accessibility = AXIsProcessTrusted()
+                let accessibility = AccessibilityPermission.check()
                 if self.microphone != microphone { self.microphone = microphone }
                 if self.accessibilityTrusted != accessibility { self.accessibilityTrusted = accessibility }
             }
@@ -245,6 +248,11 @@ final class AppModel: NSObject, ObservableObject {
         }
     }
 
+    func copyTranscript(_ text: String) {
+        guard !paste.isLeasePending else { return }
+        paste.copy(text)
+    }
+
     func copyLastTranscript() {
         guard let lastTranscript else { return }
         paste.copy(lastTranscript)
@@ -295,8 +303,18 @@ final class AppModel: NSObject, ObservableObject {
 
     func waitForPasteLease() async { await paste.waitForLease() }
 
+    func waitForDeliveryAndHistory() async {
+        if phase == .pasting { await operation?.value }
+        await paste.waitForLease()
+        await history.waitForPendingChanges()
+    }
+
     func openMicrophoneSettings() { SystemSettingsLink.microphone.open() }
     func openAccessibilitySettings() { SystemSettingsLink.accessibility.open() }
+
+    func revealAppInFinder() {
+        NSWorkspace.shared.activateFileViewerSelecting([Bundle.main.bundleURL])
+    }
 
     // MARK: Permissions
 
@@ -318,7 +336,8 @@ final class AppModel: NSObject, ObservableObject {
     /// Shows the macOS Accessibility prompt. The user grants access in System Settings.
     func requestAccessibility() {
         let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
-        accessibilityTrusted = AXIsProcessTrustedWithOptions([key: true] as CFDictionary)
+        _ = AXIsProcessTrustedWithOptions([key: true] as CFDictionary)
+        accessibilityTrusted = AccessibilityPermission.check()
     }
 
     // MARK: Sign-in
@@ -527,8 +546,10 @@ final class AppModel: NSObject, ObservableObject {
                 phase = .finished(.previewed)
                 return
             }
+            let completedAt = Date()
             phase = .pasting
             let outcome = await paste.deliver(text: text, automaticPaste: preferences.automaticPaste)
+            await history.append(HistoryEntry(text: text, createdAt: completedAt, delivery: HistoryDelivery(outcome)))
             operation = nil
             if current == generation { phase = .finished(outcome) }
         }

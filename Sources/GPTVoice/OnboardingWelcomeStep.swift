@@ -34,7 +34,7 @@ struct OnboardingWelcomeStep: View {
                     .font(AppType.detail)
                     .foregroundStyle(.secondary)
                 InfoDisclosure(label: "Storage and account",
-                               text: "Recordings are temporary files. No transcript history is saved. Sign-in is shared with Codex CLI, and this app makes no copy of your credentials.")
+                               text: "Recordings are temporary files. Transcripts are saved on this Mac, and you can remove them in History. Sign-in is shared with Codex CLI, and this app makes no copy of your credentials.")
             }
         }
     }

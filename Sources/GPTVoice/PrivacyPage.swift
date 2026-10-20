@@ -10,7 +10,7 @@ struct PrivacyPage: View {
                 fact("Audio", "Sent to ChatGPT for transcription.")
                 fact("Recordings", "Temporary files on this Mac.",
                      details: "Deleted after a successful transcription or Cancel. A failed recording is kept for Retry until you quit.")
-                fact("Transcripts", "Not saved. The last one stays in memory until you quit.")
+                fact("Transcripts", "Saved on this Mac. Delete any or all in History.")
                 fact("Sign-in", "Shared with Codex CLI.",
                      details: "Credentials stay in Codex CLI storage. This app makes no copy. To sign out, run “codex logout” in Terminal. This also signs out Codex CLI.",
                      last: true)

@@ -2,6 +2,7 @@ import Foundation
 
 enum SettingsPage: String, CaseIterable, Identifiable {
     case home
+    case history
     case shortcuts
     case appearance
     case preferences
@@ -12,6 +13,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .home: return "Home"
+        case .history: return "History"
         case .shortcuts: return "Shortcut"
         case .appearance: return "Appearance"
         case .preferences: return "Preferences"
@@ -22,6 +24,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .home: return "house"
+        case .history: return "clock.arrow.circlepath"
         case .shortcuts: return "command"
         case .appearance: return "circle.lefthalf.filled"
         case .preferences: return "slider.horizontal.3"
@@ -33,7 +36,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
     var intro: String? {
         switch self {
         case .shortcuts: return "Press it once to start dictation. Press it again to stop."
-        case .home, .appearance, .preferences, .privacy: return nil
+        case .home, .history, .appearance, .preferences, .privacy: return nil
         }
     }
 }

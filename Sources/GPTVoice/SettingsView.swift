@@ -19,8 +19,14 @@ struct SettingsView: View {
             ZStack(alignment: .top) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
-                        PageHeader(title: page.title, intro: page.intro)
-                        if !model.canChangeSettings, page != .appearance {
+                        HStack(alignment: .firstTextBaseline, spacing: 12) {
+                            PageHeader(title: page.title, intro: page.intro)
+                            if page == .history {
+                                HistoryClearView(history: model.history)
+                            }
+                        }
+                        // History stays usable during dictation, so it does not show the lock.
+                        if !model.canChangeSettings, page != .appearance, page != .history {
                             SettingsLockBanner()
                         }
                         content
@@ -55,6 +61,7 @@ struct SettingsView: View {
     @ViewBuilder private var content: some View {
         switch page {
         case .home: HomePage(model: model) { page = $0 }
+        case .history: HistoryPage(model: model)
         case .shortcuts: ShortcutPanel(model: model)
         case .appearance: AppearanceSection(preferences: preferences)
         case .preferences: BehaviorSection(model: model)

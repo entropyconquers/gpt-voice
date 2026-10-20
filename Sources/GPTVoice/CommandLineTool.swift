@@ -15,7 +15,7 @@ enum CommandLineTool {
         var result: [String: Any] = [
             "appVersion": appVersion,
             "microphone": microphoneName(AVCaptureDevice.authorizationStatus(for: .audio)),
-            "accessibility": AXIsProcessTrusted(),
+            "accessibility": AccessibilityPermission.check(),
             "codexCLIAvailable": CodexAuthentication.cliAvailable,
             "bundledFonts": FontRegistration.fontAvailability
         ]

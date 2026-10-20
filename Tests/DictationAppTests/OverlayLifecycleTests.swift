@@ -152,7 +152,7 @@ final class OverlayLifecycleTests: XCTestCase {
             FontRegistration.registerBundledFonts()
             defaults = UserDefaults(suiteName: suite)!
             clipboard = NSPasteboard.withUniqueName()
-            model = AppModel(preferences: AppPreferences(defaults: defaults), pasteboard: clipboard) { _ in
+            model = AppModel(preferences: AppPreferences(defaults: defaults), pasteboard: clipboard, history: TranscriptionHistory(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("gpt-voice-test-\(UUID().uuidString)/history.json"))) { _ in
                 "Overlay test text"
             }
             let timing = OverlayTiming(resize: resize, entrance: 0.02, exit: 0.2, reducedFade: 0.1,

@@ -11,7 +11,7 @@ final class PracticeDictationTests: XCTestCase {
         preferences.automaticPaste = true
         let clipboard = NSPasteboard.withUniqueName()
         clipboard.setString("Keep my clipboard", forType: .string)
-        let model = AppModel(preferences: preferences, pasteboard: clipboard) { _ in "A clear thought." }
+        let model = AppModel(preferences: preferences, pasteboard: clipboard, history: TranscriptionHistory(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("gpt-voice-test-\(UUID().uuidString)/history.json"))) { _ in "A clear thought." }
         defer { model.cleanup(); clipboard.releaseGlobally() }
         let finished = expectation(description: "Practice result is visible")
         let observer = model.$phase.sink { phase in
@@ -34,7 +34,7 @@ final class PracticeDictationTests: XCTestCase {
         clipboard.setString("Keep my clipboard", forType: .string)
         let started = expectation(description: "Transcription started")
         let returned = expectation(description: "Cancelled provider returned")
-        let model = AppModel(preferences: preferences, pasteboard: clipboard) { _ in
+        let model = AppModel(preferences: preferences, pasteboard: clipboard, history: TranscriptionHistory(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("gpt-voice-test-\(UUID().uuidString)/history.json"))) { _ in
             started.fulfill()
             try? await Task.sleep(nanoseconds: 1_000_000_000)
             returned.fulfill()
@@ -60,7 +60,7 @@ final class PracticeDictationTests: XCTestCase {
         let clipboard = NSPasteboard.withUniqueName()
         clipboard.setString("Keep my clipboard", forType: .string)
         let attempts = AttemptCounter()
-        let model = AppModel(preferences: preferences, pasteboard: clipboard) { _ in
+        let model = AppModel(preferences: preferences, pasteboard: clipboard, history: TranscriptionHistory(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("gpt-voice-test-\(UUID().uuidString)/history.json"))) { _ in
             if await attempts.next() == 1 { throw URLError(.timedOut) }
             return "Second try"
         }

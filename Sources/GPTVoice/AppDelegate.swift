@@ -64,12 +64,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Waits for a pending clipboard restore so the old clipboard returns before quitting.
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard model.isPasteLeasePending else {
+        guard model.isPasteLeasePending || model.phase == .pasting || model.history.isUpdating else {
             model.cleanup()
             return .terminateNow
         }
         Task {
-            await model.waitForPasteLease()
+            await model.waitForDeliveryAndHistory()
             model.cleanup()
             NSApp.reply(toApplicationShouldTerminate: true)
         }

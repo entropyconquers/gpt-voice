@@ -11,7 +11,7 @@ final class ShortcutReceiptTests: XCTestCase {
         let preferences = AppPreferences(defaults: defaults)
         let clipboard = NSPasteboard.withUniqueName()
         clipboard.setString("Keep my clipboard", forType: .string)
-        let model = AppModel(preferences: preferences, pasteboard: clipboard)
+        let model = AppModel(preferences: preferences, pasteboard: clipboard, history: TranscriptionHistory(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("gpt-voice-test-\(UUID().uuidString)/history.json")))
         defer { model.cleanup(); clipboard.releaseGlobally() }
         model.activate()
         guard model.hotkeyError == nil else {

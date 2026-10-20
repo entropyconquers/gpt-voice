@@ -64,7 +64,7 @@ final class PasteCoordinator {
         let reason: PasteOutcome.ManualReason?
         if !automaticPaste {
             reason = .automaticPasteOff
-        } else if !AXIsProcessTrusted() {
+        } else if !AccessibilityPermission.check() {
             reason = .accessibilityMissing
         } else if target == nil || snapshot == nil {
             reason = .noTarget

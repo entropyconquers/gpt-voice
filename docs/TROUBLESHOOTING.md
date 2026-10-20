@@ -24,10 +24,12 @@ If macOS did not yet list the app, select **Allow** inside GPT Voice to request 
 Accessibility is optional. Choose manual paste to copy text and paste it with Command–V.
 For automatic paste, enable GPT Voice in **System Settings → Privacy & Security → Accessibility**.
 Return to the app, or select its refresh button.
+The status check also tries a read-only Accessibility request if macOS has not refreshed its trust flag.
 
 A local rebuild can change an ad hoc signature. macOS can keep an old switch on while rejecting the new build.
 In that case, remove the old GPT Voice entry from Accessibility and add the current app again.
 Quit and reopen the app after macOS applies the change.
+For repeated local builds, use the same valid signing certificate. An ad hoc signature changes with the executable.
 Do not reset all privacy permissions or disable macOS protections.
 
 Paste can fall back to copy if the destination app, focus, or clipboard changes during a recording.
@@ -60,3 +62,13 @@ Report the release version, macOS version, processor type and exact message with
 Review the output before sharing it. It does not print account credentials.
 A command launched from a terminal can have a different macOS privacy context from a Finder-launched app.
 Check permission behavior in the actual installed app as well.
+
+## History
+
+Successful transcriptions appear in **Settings → History**, newest first.
+Copy an entry, delete one entry, or use **Clear all**. Deletion requires confirmation.
+The app saves local dates and times. It shows the destination name when paste keystrokes were sent to a known app.
+A manual paste cannot be tracked.
+
+If History reports a save error, keep GPT Voice open and select **Try again**.
+An unreadable history file is kept intact. GPT Voice does not replace it with an empty history.

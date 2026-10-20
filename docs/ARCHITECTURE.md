@@ -25,3 +25,11 @@ The project does not guarantee access on every plan or for every account.
 The recording pill uses short fades and animated width changes.
 Reduce Motion removes the blur and resize motion.
 Result notices disappear automatically. Recovery actions stay in the menu bar.
+
+## Local history
+
+`TranscriptionHistory` publishes saved transcripts to the History page. It serializes commands and delegates file access to `HistoryRepository`.
+The repository writes a versioned JSON document through a private temporary file and an atomic replacement.
+Entries contain the exact text, completion time, and delivery result. They do not contain audio, window titles, document paths, or account data.
+Normal dictation saves once after delivery. Practice, errors, and cancellation before a result do not create entries. Copying an old result does not duplicate it.
+The app waits for pending delivery and history writes before normal quit.

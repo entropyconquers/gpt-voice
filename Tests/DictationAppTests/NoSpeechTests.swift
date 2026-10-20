@@ -11,7 +11,7 @@ final class NoSpeechTests: XCTestCase {
         let defaults = UserDefaults(suiteName: suite)!
         let clipboard = NSPasteboard.withUniqueName()
         clipboard.setString("Keep my clipboard", forType: .string)
-        let model = AppModel(preferences: AppPreferences(defaults: defaults), pasteboard: clipboard) { _ in
+        let model = AppModel(preferences: AppPreferences(defaults: defaults), pasteboard: clipboard, history: TranscriptionHistory(fileURL: FileManager.default.temporaryDirectory.appendingPathComponent("gpt-voice-test-\(UUID().uuidString)/history.json"))) { _ in
             throw DictationError.emptyTranscript
         }
         defer {

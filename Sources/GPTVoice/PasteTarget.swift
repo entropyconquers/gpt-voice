@@ -14,7 +14,7 @@ struct PasteTarget {
               app.processIdentifier != ProcessInfo.processInfo.processIdentifier else { return nil }
         let pid = app.processIdentifier
         let focus: (element: AXUIElement?, window: AXUIElement?) =
-            AXIsProcessTrusted() ? focusedAttributes(of: pid) : (element: nil, window: nil)
+            AccessibilityPermission.check() ? focusedAttributes(of: pid) : (element: nil, window: nil)
         return PasteTarget(processID: pid, appName: app.localizedName,
                            focusedElement: focus.element, focusedWindow: focus.window)
     }

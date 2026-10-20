@@ -41,7 +41,11 @@ Keyboard footage: [Designed by Magnific](https://www.magnific.com/). [All media 
 5. Grant microphone access. Grant Accessibility access for automatic paste, or choose manual paste.
 6. Choose a shortcut and try the practice recording.
 
-**Mac download:** Pending Apple signing and notarization. [Build from source](#build-from-source) while the release is prepared.
+**Mac download:** [v0.1.4 — Apple Silicon and Intel](https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg). This build uses a stable Apple Development signature. It is **not notarized by Apple**, so macOS may block it on first open.
+
+If macOS says Apple cannot check or verify the app, or the developer is unidentified, use **System Settings → Privacy & Security → Open Anyway** after you decide to trust the download. If macOS says the app **will damage your computer**, do not override that warning. [Report its exact text](https://github.com/entropyconquers/gpt-voice/issues).
+
+You can review the code and [build from source](#build-from-source) instead. Open source code does not replace Apple's malware checks. Microphone and Accessibility grants are separate from this verification warning.
 
 ## A small tool that stays out of the way
 
@@ -51,9 +55,9 @@ Keyboard footage: [Designed by Magnific](https://www.magnific.com/). [All media 
 - Onboarding with permission recovery and an in-app practice step.
 - System, Light and Dark themes, seven accent colors and top or bottom pill placement.
 - Optional sound cues and launch at login. Launch at login starts off.
-- Short result notices that fade away. No saved transcript history.
+- Short result notices that fade away. Local transcript history with copy and delete controls.
 
-The app keeps the last transcript in memory for recovery until you quit.
+History saves successful transcriptions on this Mac with their date, time, and known destination app. Copy any entry, delete one, or clear all.
 Audio goes to ChatGPT for transcription. This is not an offline tool. [Read the privacy notes](docs/PRIVACY.md).
 
 ## Build from source

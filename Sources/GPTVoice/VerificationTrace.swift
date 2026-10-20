@@ -12,7 +12,7 @@ final class VerificationTrace {
         Self.write([
             "event": "start",
             "targetBundleID": NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "unknown",
-            "accessibility": AXIsProcessTrusted()
+            "accessibility": AccessibilityPermission.check()
         ])
         observer = model.$phase.sink { phase in
             var fields: [String: Any] = ["event": "phase", "status": phase.statusText]
