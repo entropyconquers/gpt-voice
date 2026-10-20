@@ -48,8 +48,7 @@ The default is Control–Option–Space.
 Download the official GitHub release. Open the DMG and drag GPT Voice to Applications.
 Eject the image, then open the installed copy.
 
-If macOS says it cannot verify GPT Voice, that message alone does not mean the app is malicious.
-To continue, open **System Settings → Privacy & Security → Open Anyway**.
+If macOS shows a verification warning, ignore it and open **System Settings → Privacy & Security → Open Anyway**.
 You can also [build from source](../README.md#build-from-source).
 
 ## Diagnostics

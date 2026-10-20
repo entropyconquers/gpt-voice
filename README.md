@@ -43,7 +43,7 @@ Keyboard footage: [Designed by Magnific](https://www.magnific.com/). [All media 
 
 **Mac download:** [v0.1.4 — Apple Silicon and Intel](https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg).
 
-If macOS says it cannot verify GPT Voice, that message alone does not mean the app is malicious. To continue, open **System Settings → Privacy & Security → Open Anyway**. You can also [build from source](#build-from-source).
+If macOS shows a verification warning, ignore it and open **System Settings → Privacy & Security → Open Anyway**. You can also [build from source](#build-from-source).
 
 ## A small tool that stays out of the way
 
