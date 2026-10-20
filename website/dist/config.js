@@ -1,14 +1,13 @@
-/* Enable releaseReady only after the signed, notarized DMG is published.
- * Pending download buttons point to the install section. */
+/* releaseReady: a public DMG is published. This preview is development-signed and not notarized,
+ * and the site says so beside every download. When false, download buttons point to the install section. */
 window.GPTV_CONFIG = {
-  releaseReady: false,
+  releaseReady: true,
 
-  // Leave empty until a public binary release is ready.
-  version: "",
+  version: "0.1.4",
 
   repoUrl: "https://github.com/entropyconquers/gpt-voice",
   releaseUrl: "https://github.com/entropyconquers/gpt-voice/releases/latest",
-  dmgUrl: "https://github.com/entropyconquers/gpt-voice/releases/latest/download/GPT-Voice.dmg",
+  dmgUrl: "https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg",
 
   video: {
     src: "assets/gpt-voice-promo.mp4",

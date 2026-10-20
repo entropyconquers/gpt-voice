@@ -81,7 +81,7 @@
       <a class="btn btn-quiet btn-sm btn-icon-sm" data-link="repo" href="https://github.com/entropyconquers/gpt-voice" aria-label="GPT Voice on GitHub">
         <svg class="i" aria-hidden="true"><use href="#i-regular-github-logo"/></svg>
       </a>
-      <a class="btn btn-ink btn-sm dl" data-link="download" href="#install">
+      <a class="btn btn-ink btn-sm dl" data-link="download" href="https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg">
         <svg class="i dl-icon" aria-hidden="true"><use href="#i-regular-download-simple"/></svg>
         <span>Download</span>
       </a>
@@ -99,7 +99,7 @@
       <p class="lede">Press a shortcut, talk, and your words land at the&nbsp;cursor.</p>
 
       <div class="cta-row">
-        <a class="btn btn-ink btn-lg dl" data-link="download" href="#install">
+        <a class="btn btn-ink btn-lg dl" data-link="download" href="https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg">
           <svg class="i dl-icon" aria-hidden="true"><use href="#i-regular-download-simple"/></svg>
           <span>Download for Mac</span>
         </a>
@@ -116,7 +116,8 @@
       <ul class="tokens" aria-label="Requirements">
         <li><svg class="i" aria-hidden="true"><use href="#i-regular-desktop"/></svg>macOS 13+</li>
         <li><svg class="i" aria-hidden="true"><use href="#i-regular-cpu"/></svg><span data-version></span>Apple Silicon &amp; Intel</li>
-        <li data-when="pending"><a href="#install"><span class="dot" aria-hidden="true"></span>Coming soon</a></li>
+        <li data-when="ready"><a href="#install"><span class="dot" aria-hidden="true"></span>Not notarized by Apple · Install guide</a></li>
+        <li data-when="pending" hidden><a href="#install"><span class="dot" aria-hidden="true"></span>Coming soon</a></li>
       </ul>
     </div>
 
@@ -283,8 +284,8 @@
             <span class="icon-disc"><svg class="i"><use href="#i-regular-lock-simple"/></svg></span>
           </div>
           <div class="cell-text">
-            <h3>No transcript history</h3>
-            <p>Recordings are temporary files on your Mac.</p>
+            <h3>History stays on your Mac</h3>
+            <p>Copy a transcript again, or delete it.</p>
           </div>
         </article>
 
@@ -356,8 +357,8 @@
           </li>
           <li class="step">
             <span class="step-icon" aria-hidden="true"><svg class="i"><use href="#i-regular-download-simple"/></svg></span>
-            <div data-when="ready" hidden><h3>Download GPT Voice</h3><p>Drag it to Applications and allow the microphone.</p></div>
-            <div data-when="pending"><h3>Mac download coming soon</h3><p>Signing is in progress. <a data-link="source" href="https://github.com/entropyconquers/gpt-voice#build-from-source">Build from source</a> for now.</p></div>
+            <div data-when="ready"><h3>Download GPT Voice</h3><p>Open the DMG and drag GPT Voice to Applications. Then allow the microphone and Accessibility. Quit GPT Voice before updating.</p></div>
+            <div data-when="pending" hidden><h3>Mac download coming soon</h3><p>Signing is in progress. <a data-link="source" href="https://github.com/entropyconquers/gpt-voice#build-from-source">Build from source</a> for now.</p></div>
           </li>
           <li class="step">
             <span class="step-icon step-keys" aria-hidden="true">⌃⌥</span>
@@ -365,30 +366,38 @@
           </li>
         </ol>
 
-        <div class="faq reveal">
-          <details>
-            <summary>Do I need an API key?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
-            <div class="answer"><p>No. It reuses the file-backed ChatGPT session from Codex CLI.</p></div>
-          </details>
-          <details>
-            <summary>Where does my audio go?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
-            <div class="answer"><p>To ChatGPT for transcription, over a private route that can change. Recordings are temporary files on your Mac. There's no offline mode.</p></div>
-          </details>
-          <details>
-            <summary>Will my ChatGPT plan work?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
-            <div class="answer"><p>Access depends on your ChatGPT account. Limits can vary, and this private route can change.</p></div>
-          </details>
-          <details>
-            <summary>Which Macs?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
-            <div class="answer"><p>macOS 13 or later, Apple Silicon and Intel. One download covers both.</p></div>
-          </details>
+        <div class="install-side">
+          <div class="gate reveal" data-when="ready">
+            <h3><span class="dot" aria-hidden="true"></span>Not notarized by Apple</h3>
+            <p>This preview is development-signed but not notarized, so macOS may block the first open. You can also <a data-link="source" href="https://github.com/entropyconquers/gpt-voice#build-from-source">build it from source</a>.</p>
+            <p>If macOS says Apple can't check or verify GPT Voice, or that its developer is unidentified, open System Settings → Privacy &amp; Security and click Open Anyway.</p>
+            <p>If it says GPT Voice will damage your computer, don't open it. Move it to the Trash and <a href="https://github.com/entropyconquers/gpt-voice/issues">report the exact message</a>.</p>
+          </div>
+          <div class="faq reveal">
+            <details>
+              <summary>Do I need an API key?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+              <div class="answer"><p>No. It reuses the file-backed ChatGPT session from Codex CLI.</p></div>
+            </details>
+            <details>
+              <summary>Where does my audio go?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+              <div class="answer"><p>To ChatGPT for transcription, over a private route that can change. Recordings are temporary files on your Mac. There's no offline mode.</p></div>
+            </details>
+            <details>
+              <summary>Will my ChatGPT plan work?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+              <div class="answer"><p>Access depends on your ChatGPT account. Limits can vary, and this private route can change.</p></div>
+            </details>
+            <details>
+              <summary>Which Macs?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+              <div class="answer"><p>macOS 13 or later, Apple Silicon and Intel. One download covers both.</p></div>
+            </details>
+          </div>
         </div>
       </div>
 
       <div class="outro reveal">
         <img class="outro-icon" src="assets/app-icon-512.png" width="64" height="64" alt="">
         <div class="cta-row">
-          <a class="btn btn-ink btn-lg dl" data-link="download" data-when="ready" hidden href="#install">
+          <a class="btn btn-ink btn-lg dl" data-link="download" data-when="ready" href="https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg">
             <svg class="i dl-icon" aria-hidden="true"><use href="#i-regular-download-simple"/></svg>
             <span>Download for Mac</span>
           </a>

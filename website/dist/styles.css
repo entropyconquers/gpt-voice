@@ -939,6 +939,17 @@ kbd {
 .step a { text-underline-offset: 3px; }
 .step-note { display: flex; align-items: center; gap: 8px; margin-top: 8px !important; font-size: 13.5px !important; }
 
+.install-side { display: grid; gap: 12px; }
+.gate {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+}
+.gate h3 { display: flex; align-items: center; gap: 9px; font-size: 16.5px; font-weight: 600; line-height: 1.35; }
+.gate p { margin-top: 8px; font-size: 15px; color: var(--ink-2); max-width: 52ch; text-wrap: pretty; }
+.gate a { text-underline-offset: 3px; }
+
 .faq {
   padding: 4px 22px;
   border-radius: 22px;
