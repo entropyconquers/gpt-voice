@@ -175,6 +175,14 @@
     var timers = [];
     var ticker = null;
 
+    // Idle invitation on the keycaps (CSS: .is-inviting). It runs only while the demo is on
+    // screen and the tab is visible, stops at the first recording, and comes back after Reset.
+    var invite = { wanted: true, inView: false };
+    function updateInvite() {
+      demo.classList.toggle("is-inviting",
+        invite.wanted && invite.inView && !document.hidden && !reduceMotion.matches);
+    }
+
     function later(fn, ms) { var t = setTimeout(fn, ms); timers.push(t); return t; }
     function clearTimers() {
       timers.forEach(clearTimeout); timers = [];
@@ -315,6 +323,8 @@
     /* Flow */
 
     function start() {
+      invite.wanted = false;
+      updateInvite();
       clearTimers();
       setState("recording");
       s.words = SAMPLES[s.run % SAMPLES.length].split(" ");
@@ -467,6 +477,8 @@
       setState("idle");
       hidePill();
       renderComposer();
+      invite.wanted = true;
+      updateInvite();
       if (!quiet) announce("Preview reset");
     }
     el.reset.addEventListener("click", function () { reset(false); });
@@ -509,12 +521,27 @@
 
     reset(true);
 
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        invite.inView = entries[entries.length - 1].isIntersecting;
+        updateInvite();
+      }, { threshold: 0.35 }).observe(demo);
+    } else {
+      invite.inView = true;
+      updateInvite();
+    }
+    document.addEventListener("visibilitychange", updateInvite);
+    if (reduceMotion.addEventListener) reduceMotion.addEventListener("change", updateInvite);
+    else if (reduceMotion.addListener) reduceMotion.addListener(updateInvite);
+
     /* ?demo=recording|transcribing|pasted|copied|notice|nospeech|settings freezes a state for screenshots and QA. */
     var freeze = new URLSearchParams(location.search).get("demo");
     if (freeze) freezeState(freeze);
 
     function freezeState(name) {
       var words = SAMPLES[0].split(" ");
+      invite.wanted = false;
+      updateInvite();
       if (name === "settings") { setSettingsOpen(true); return; }
       if (name === "recording") {
         setState("recording");

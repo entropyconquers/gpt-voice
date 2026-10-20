@@ -693,6 +693,39 @@ kbd {
 .keys-hint::before { content: "←"; font-weight: 400; color: var(--ink-3); transition: transform var(--d3) var(--ease-out); }
 .keys:hover + .keys-hint::before { transform: translateX(-3px); }
 
+/* Idle invitation: the arrow nudges toward the keys, then the keys glow softly one after another.
+   JS adds .is-inviting only while the demo is on screen, before the first recording, and never with
+   reduced motion. The [data-state="idle"] guard keeps it off during every busy or finished state. */
+.key { isolation: isolate; }
+.key::before {
+  content: ""; position: absolute; inset: -1px; z-index: -1;
+  border-radius: inherit;
+  border: 1.5px solid var(--accent-fg);
+  background: color-mix(in srgb, var(--accent-fg) 9%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-fg) 10%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.keys-hint { --nudge-x: -4px; --nudge-y: 0px; }
+.demo.is-inviting[data-state="idle"] .key::before { animation: key-invite 3.6s var(--ease-in-out) infinite; }
+.demo.is-inviting[data-state="idle"] .key:nth-child(2)::before { animation-delay: 110ms; }
+.demo.is-inviting[data-state="idle"] .key:nth-child(3)::before { animation-delay: 220ms; }
+.demo.is-inviting[data-state="idle"] .keys-hint::before { animation: arrow-invite 3.6s var(--ease-in-out) infinite; }
+.demo.is-inviting[data-state="idle"] .keys:hover .key::before,
+.demo.is-inviting[data-state="idle"] .keys:focus-visible .key::before { animation-play-state: paused; }
+@keyframes key-invite {
+  0%, 20% { opacity: 0; }
+  34% { opacity: .9; }
+  58%, 100% { opacity: 0; }
+}
+@keyframes arrow-invite {
+  0% { opacity: .55; transform: translate(0, 0); }
+  10% { opacity: 1; transform: translate(var(--nudge-x), var(--nudge-y)); }
+  20% { transform: translate(0, 0); }
+  30% { opacity: 1; transform: translate(var(--nudge-x), var(--nudge-y)); }
+  44%, 100% { opacity: .55; transform: translate(0, 0); }
+}
+
 .noscript { margin-top: 12px; text-align: center; font-size: 14px; color: var(--ink-2); }
 
 /* ---------- Bento ---------- */
@@ -984,6 +1017,7 @@ kbd {
   .key { width: 60px; height: 54px; }
   .key-space { width: auto; flex: 1; }
   .keys-hint::before { content: "↑"; }
+  .keys-hint { --nudge-x: 0px; --nudge-y: -4px; }
   .footer-row { grid-template-columns: 1fr; }
   .footer-links { justify-self: start; }
 }
@@ -1000,6 +1034,9 @@ kbd {
   .caret, .mini-caret { animation: none; }
   .spinner { animation: spin 1.6s linear infinite !important; }
   .demo[data-state="recording"] .key-space::after,
-  .demo[data-state="recording"] .mb-app .b { animation: none !important; }
+  .demo[data-state="recording"] .mb-app .b,
+  .demo .key::before,
+  .demo .keys-hint::before { animation: none !important; }
+  .demo .key::before { opacity: 0 !important; }
   .js .reveal { opacity: 1; transform: none; }
 }
