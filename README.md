@@ -41,11 +41,9 @@ Keyboard footage: [Designed by Magnific](https://www.magnific.com/). [All media 
 5. Grant microphone access. Grant Accessibility access for automatic paste, or choose manual paste.
 6. Choose a shortcut and try the practice recording.
 
-**Mac download:** [v0.1.4 — Apple Silicon and Intel](https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg). This build uses a stable Apple Development signature. It is **not notarized by Apple**, so macOS may block it on first open.
+**Mac download:** [v0.1.4 — Apple Silicon and Intel](https://github.com/entropyconquers/gpt-voice/releases/download/v0.1.4/GPT-Voice-0.1.4-universal.dmg).
 
-If macOS says Apple cannot check or verify the app, or the developer is unidentified, use **System Settings → Privacy & Security → Open Anyway** after you decide to trust the download. If macOS says the app **will damage your computer**, do not override that warning. [Report its exact text](https://github.com/entropyconquers/gpt-voice/issues).
-
-You can review the code and [build from source](#build-from-source) instead. Open source code does not replace Apple's malware checks. Microphone and Accessibility grants are separate from this verification warning.
+If macOS says it cannot verify GPT Voice, that message alone does not mean the app is malicious. To continue, open **System Settings → Privacy & Security → Open Anyway**. You can also [build from source](#build-from-source).
 
 ## A small tool that stays out of the way
 

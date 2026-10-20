@@ -12,8 +12,8 @@
 
   function applyConfig() {
     var ready = cfg.releaseReady === true;
-    // Without a published release, Download stays on this page (#install), which links to building
-    // from source. The ready state shows the not-notarized notice and install guidance.
+    // releaseReady picks the download destinations: the DMG and latest release when true,
+    // or the install section (#install) and the repo's releases page when false.
     var hrefs = {
       download: ready ? cfg.dmgUrl : "#install",
       repo: cfg.repoUrl,

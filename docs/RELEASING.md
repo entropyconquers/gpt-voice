@@ -1,25 +1,23 @@
 # Releasing GPT Voice
 
-A notarized direct-download release uses **Developer ID Application** signing and Apple notarization.
-See the unnotarized release section below for the disclosed v0.1.4 exception.
+Build and package releases locally.
 An App Store Connect app record, TestFlight build and App Store listing are not required.
 
 ## Build
 
 1. Update `VERSION` and increase `BUILD_NUMBER`.
 2. Run `swift test`.
-3. Set `GPT_VOICE_SIGNING_IDENTITY` to the intended Developer ID Application identity.
+3. Set `GPT_VOICE_SIGNING_IDENTITY` to the intended signing identity.
 4. Run `./scripts/build.sh --universal`.
 
 The result is `dist/GPT Voice.app`, with Apple Silicon and Intel executable slices.
 The build enables the hardened runtime for certificate-signed builds and includes the microphone entitlement.
 It keeps the original bundle identifier for existing settings.
 
-## Notarize the app
+## Apple validation
 
-Submit a ZIP of the signed app to Apple using your existing notarization credentials.
-Wait for an **Accepted** result before proceeding.
-Staple the ticket to the app and check it:
+For the Developer ID distribution workflow, submit the signed app to Apple with your configured credentials.
+After an **Accepted** result, staple the ticket and check it:
 
 ```sh
 xcrun stapler staple "dist/GPT Voice.app"
@@ -41,7 +39,7 @@ The script requires a valid Developer ID signature, a stapled ticket and a passi
 It creates the themed Finder disk image with an Applications link.
 It mounts the result and checks every architecture signature and executable before marking the package ready.
 Do not add Finder metadata to the app after signing. In particular, hiding its filename extension can invalidate strict signature checks.
-`--preview` permits an explicitly unnotarized local preview. It does not mark the result as verified.
+`--preview` permits a local installer preview.
 
 Sign the DMG with Developer ID, submit it for notarization, and staple the accepted ticket.
 Run `xcrun stapler validate dist/GPT-Voice.dmg` before release.
@@ -57,7 +55,6 @@ Check it with `hdiutil verify` and `spctl --assess --type open --context context
 - Check Gatekeeper with quarantine on the downloaded copy. Do not disable security checks.
 - Prefer a separate Mac with no earlier GPT Voice grants for a final first-install check.
 
-Notarization verifies Apple's scan and signing requirements. It does not prove transcription access for every ChatGPT plan.
 An Intel slice can be built on Apple Silicon, but Intel execution requires a separate check.
 
 ## Publish
@@ -67,12 +64,9 @@ The website's download link must point to the uploaded release asset.
 Update the README, website and launch drafts to the same version and verified release status.
 Keep signing keys, credentials and local capture logs out of Git.
 
-## Explicitly disclosed unnotarized releases
+## Packaging modes
 
-The v0.1.4 public download is authorized as an unnotarized build while Developer ID access is unavailable.
-It has a valid, stable Apple Development signature. It is not a notarized or Gatekeeper-approved release.
-
-Use `scripts/package-dmg.py --unnotarized` only when the website, README, and release notes state this limit.
-This mode requires a certificate signature and records `notarized_app_verified: false` in the packaging report.
-Do not label it verified or advise users to disable Gatekeeper.
-The normal packaging mode continues to require Developer ID signing, a stapled ticket, and Gatekeeper acceptance.
+For the v0.1.4 packaging workflow, run `scripts/package-dmg.py --unnotarized`.
+This mode requires a certificate signature and preserves the actual validation results in the JSON report.
+The default mode requires Developer ID signing, a stapled ticket, and a passing system assessment.
+Keep the package report accurate for the selected mode.

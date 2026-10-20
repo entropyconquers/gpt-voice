@@ -45,13 +45,12 @@ The default is Control–Option–Space.
 
 ## Download and installation
 
-Use the official GitHub release. Confirm the release's signing and notarization status.
-Open the DMG and drag the app to Applications. Eject the image, then open the installed copy.
-A first launch can still show Apple's normal downloaded-app confirmation.
-Microphone and Accessibility permission prompts are separate from Gatekeeper.
+Download the official GitHub release. Open the DMG and drag GPT Voice to Applications.
+Eject the image, then open the installed copy.
 
-If Gatekeeper blocks a release described as notarized, do not disable it.
-Report the release version, macOS version, processor type and exact message without account data.
+If macOS says it cannot verify GPT Voice, that message alone does not mean the app is malicious.
+To continue, open **System Settings → Privacy & Security → Open Anyway**.
+You can also [build from source](../README.md#build-from-source).
 
 ## Diagnostics
 

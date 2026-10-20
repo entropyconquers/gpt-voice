@@ -1,5 +1,5 @@
-/* releaseReady: a public DMG is published. This preview is development-signed and not notarized,
- * and the site says so beside every download. When false, download buttons point to the install section. */
+/* releaseReady: true when a public DMG is published. Download buttons then go to dmgUrl and release
+ * links to releaseUrl. When false, download buttons go to the install section and release links to the repo's releases page. */
 window.GPTV_CONFIG = {
   releaseReady: true,
 
