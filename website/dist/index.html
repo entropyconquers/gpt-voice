@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en" data-accent="graphite">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GPT Voice — Dictate into any app on your Mac</title>
+  <meta name="description" content="GPT Voice is a free, open-source Mac menu bar app. Press a shortcut, talk, and your words land where your cursor is.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111112" media="(prefers-color-scheme: dark)">
+
+  <link rel="canonical" href="https://gpt-voice.astralcod128.chatgpt.site/">
+  <meta property="og:url" content="https://gpt-voice.astralcod128.chatgpt.site/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GPT Voice">
+  <meta property="og:title" content="GPT Voice — Dictate into any app on your Mac">
+  <meta property="og:description" content="Press a shortcut, talk, press it again. Your words land where your cursor is. Free and open source.">
+  <meta property="og:image" content="https://gpt-voice.astralcod128.chatgpt.site/assets/social-preview.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preload" href="fonts/FTRegolaNeue-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script src="config.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<svg width="0" height="0" class="sr-only" aria-hidden="true"><!-- Phosphor Icons 2.1.1 (MIT), see CREDITS.txt -->
+<symbol id="i-fill-check-circle" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></symbol>
+<symbol id="i-fill-play" viewBox="0 0 256 256"><path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/></symbol>
+<symbol id="i-fill-star" viewBox="0 0 256 256"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.46,16.46,0,0,1,9.37,28.86Z"/></symbol>
+<symbol id="i-fill-stop" viewBox="0 0 256 256"><path d="M216,56V200a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V56A16,16,0,0,1,56,40H200A16,16,0,0,1,216,56Z"/></symbol>
+<symbol id="i-regular-arrow-counter-clockwise" viewBox="0 0 256 256"><path d="M224,128a96,96,0,0,1-94.71,96H128A95.38,95.38,0,0,1,62.1,197.8a8,8,0,0,1,11-11.63A80,80,0,1,0,71.43,71.39a3.07,3.07,0,0,1-.26.25L44.59,96H72a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V56a8,8,0,0,1,16,0V85.8L60.25,60A96,96,0,0,1,224,128Z"/></symbol>
+<symbol id="i-regular-arrow-u-down-left" viewBox="0 0 256 256"><path d="M232,112a64.07,64.07,0,0,1-64,64H51.31l34.35,34.34a8,8,0,0,1-11.32,11.32l-48-48a8,8,0,0,1,0-11.32l48-48a8,8,0,0,1,11.32,11.32L51.31,160H168a48,48,0,0,0,0-96H80a8,8,0,0,1,0-16h88A64.07,64.07,0,0,1,232,112Z"/></symbol>
+<symbol id="i-regular-arrow-up" viewBox="0 0 256 256"><path d="M205.66,117.66a8,8,0,0,1-11.32,0L136,59.31V216a8,8,0,0,1-16,0V59.31L61.66,117.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0l72,72A8,8,0,0,1,205.66,117.66Z"/></symbol>
+<symbol id="i-regular-caret-down" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></symbol>
+<symbol id="i-regular-circle-half" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,16.37a86.4,86.4,0,0,1,16,3V212.67a86.4,86.4,0,0,1-16,3Zm32,9.26a87.81,87.81,0,0,1,16,10.54V195.83a87.81,87.81,0,0,1-16,10.54ZM40,128a88.11,88.11,0,0,1,80-87.63V215.63A88.11,88.11,0,0,1,40,128Zm160,50.54V77.46a87.82,87.82,0,0,1,0,101.08Z"/></symbol>
+<symbol id="i-regular-clipboard-text" viewBox="0 0 256 256"><path d="M168,152a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,152Zm-8-40H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm56-64V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V48A16,16,0,0,1,56,32H92.26a47.92,47.92,0,0,1,71.48,0H200A16,16,0,0,1,216,48ZM96,64h64a32,32,0,0,0-64,0ZM200,48H173.25A47.93,47.93,0,0,1,176,64v8a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V64a47.93,47.93,0,0,1,2.75-16H56V216H200Z"/></symbol>
+<symbol id="i-regular-cpu" viewBox="0 0 256 256"><path d="M152,96H104a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V104A8,8,0,0,0,152,96Zm-8,48H112V112h32Zm88,0H216V112h16a8,8,0,0,0,0-16H216V56a16,16,0,0,0-16-16H160V24a8,8,0,0,0-16,0V40H112V24a8,8,0,0,0-16,0V40H56A16,16,0,0,0,40,56V96H24a8,8,0,0,0,0,16H40v32H24a8,8,0,0,0,0,16H40v40a16,16,0,0,0,16,16H96v16a8,8,0,0,0,16,0V216h32v16a8,8,0,0,0,16,0V216h40a16,16,0,0,0,16-16V160h16a8,8,0,0,0,0-16Zm-32,56H56V56H200v95.87s0,.09,0,.13,0,.09,0,.13V200Z"/></symbol>
+<symbol id="i-regular-desktop" viewBox="0 0 256 256"><path d="M208,40H48A24,24,0,0,0,24,64V176a24,24,0,0,0,24,24h72v16H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V200h72a24,24,0,0,0,24-24V64A24,24,0,0,0,208,40ZM48,56H208a8,8,0,0,1,8,8v80H40V64A8,8,0,0,1,48,56ZM208,184H48a8,8,0,0,1-8-8V160H216v16A8,8,0,0,1,208,184Z"/></symbol>
+<symbol id="i-regular-download-simple" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></symbol>
+<symbol id="i-regular-github-logo" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/></symbol>
+<symbol id="i-regular-lock-simple" viewBox="0 0 256 256"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Z"/></symbol>
+<symbol id="i-regular-microphone-slash" viewBox="0 0 256 256"><path d="M213.92,218.62l-160-176A8,8,0,0,0,42.08,53.38L80,95.09V128a48,48,0,0,0,69.11,43.12l11.1,12.2A63.41,63.41,0,0,1,128,192a64.07,64.07,0,0,1-64-64,8,8,0,0,0-16,0,80.11,80.11,0,0,0,72,79.6V240a8,8,0,0,0,16,0V207.59a78.83,78.83,0,0,0,35.16-12.22l30.92,34a8,8,0,1,0,11.84-10.76ZM128,160a32,32,0,0,1-32-32V112.69l41.66,45.82A32,32,0,0,1,128,160Zm57.52-3.91A63.32,63.32,0,0,0,192,128a8,8,0,0,1,16,0,79.16,79.16,0,0,1-8.11,35.12,8,8,0,0,1-7.19,4.49,7.88,7.88,0,0,1-3.51-.82A8,8,0,0,1,185.52,156.09ZM84,44.87A48,48,0,0,1,176,64v64a49.19,49.19,0,0,1-.26,5,8,8,0,0,1-8,7.17,8.13,8.13,0,0,1-.84,0,8,8,0,0,1-7.12-8.79c.11-1.1.17-2.24.17-3.36V64A32,32,0,0,0,98.64,51.25,8,8,0,1,1,84,44.87Z"/></symbol>
+<symbol id="i-regular-microphone" viewBox="0 0 256 256"><path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z"/></symbol>
+<symbol id="i-regular-moon" viewBox="0 0 256 256"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></symbol>
+<symbol id="i-regular-quotes" viewBox="0 0 256 256"><path d="M100,56H40A16,16,0,0,0,24,72v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,100,56Zm0,80H40V72h60ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Zm0,80H156V72h60Z"/></symbol>
+<symbol id="i-regular-sliders-horizontal" viewBox="0 0 256 256"><path d="M40,88H73a32,32,0,0,0,62,0h81a8,8,0,0,0,0-16H135a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16Zm64-24A16,16,0,1,1,88,80,16,16,0,0,1,104,64ZM216,168H199a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16h97a32,32,0,0,0,62,0h17a8,8,0,0,0,0-16Zm-48,24a16,16,0,1,1,16-16A16,16,0,0,1,168,192Z"/></symbol>
+<symbol id="i-regular-star" viewBox="0 0 256 256"><path d="M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z"/></symbol>
+<symbol id="i-regular-sun" viewBox="0 0 256 256"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></symbol>
+<symbol id="i-regular-terminal-window" viewBox="0 0 256 256"><path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"/></symbol>
+<symbol id="i-regular-waveform-slash" viewBox="0 0 256 256"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM53.92,34.62A8,8,0,1,0,42.08,45.38L80,87.09V224a8,8,0,0,0,16,0V104.69l24,26.4V192a8,8,0,0,0,16,0V148.69l66.08,72.69a8,8,0,1,0,11.84-10.76ZM88,44.43a8,8,0,0,0,8-8V32a8,8,0,0,0-16,0v4.43A8,8,0,0,0,88,44.43Zm40,44a8,8,0,0,0,8-8V64a8,8,0,0,0-16,0V80.43A8,8,0,0,0,128,88.43Zm40,44a8,8,0,0,0,8-8V96a8,8,0,0,0-16,0v28.43A8,8,0,0,0,168,132.43ZM208,72a8,8,0,0,0-8,8v88.43a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></symbol>
+<symbol id="i-regular-x" viewBox="0 0 256 256"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="#top" aria-label="GPT Voice home">
+      <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <rect width="100" height="100" rx="22.6"/>
+        <rect class="b" x="18.3" y="39.8" width="7.45" height="20.3" rx="3.72"/>
+        <rect class="b" x="32.3" y="30.5" width="7.45" height="39" rx="3.72"/>
+        <rect class="b" x="46.4" y="22.7" width="7.45" height="54.7" rx="3.72"/>
+        <rect class="b" x="60.4" y="32.8" width="7.45" height="34.5" rx="3.72"/>
+        <rect class="b" x="74.3" y="41.4" width="7.45" height="17.2" rx="3.72"/>
+      </svg>
+      <span>GPT Voice</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#film">Film</a>
+      <a href="#install">Install</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-quiet btn-sm btn-icon-sm" data-link="repo" href="https://github.com/entropyconquers/gpt-voice" aria-label="GPT Voice on GitHub">
+        <svg class="i" aria-hidden="true"><use href="#i-regular-github-logo"/></svg>
+      </a>
+      <a class="btn btn-ink btn-sm dl" data-link="download" href="#install">
+        <svg class="i dl-icon" aria-hidden="true"><use href="#i-regular-download-simple"/></svg>
+        <span>Download</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- Hero -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-head">
+      <img class="hero-icon" src="assets/app-icon-512.png" width="88" height="88" alt="">
+      <h1 id="hero-title" class="display">Dictate into any&nbsp;app.</h1>
+      <p class="lede">Press a shortcut, talk, and your words land at the&nbsp;cursor.</p>
+
+      <div class="cta-row">
+        <a class="btn btn-ink btn-lg dl" data-link="download" href="#install">
+          <svg class="i dl-icon" aria-hidden="true"><use href="#i-regular-download-simple"/></svg>
+          <span>Download for Mac</span>
+        </a>
+        <a class="btn btn-quiet btn-lg star" data-link="repo" href="https://github.com/entropyconquers/gpt-voice">
+          <svg class="i" aria-hidden="true"><use href="#i-regular-github-logo"/></svg>
+          <span>Star on GitHub</span>
+          <span class="star-icon" aria-hidden="true">
+            <svg class="i"><use href="#i-regular-star"/></svg>
+            <svg class="i i-fill"><use href="#i-fill-star"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <ul class="tokens" aria-label="Requirements">
+        <li><svg class="i" aria-hidden="true"><use href="#i-regular-desktop"/></svg>macOS 13+</li>
+        <li><svg class="i" aria-hidden="true"><use href="#i-regular-cpu"/></svg><span data-version></span>Apple Silicon &amp; Intel</li>
+        <li data-when="pending"><a href="#install"><span class="dot" aria-hidden="true"></span>Coming soon</a></li>
+      </ul>
+    </div>
+
+    <!-- Interactive demo -->
+    <div class="wrap">
+      <div class="demo" id="demo" data-theme="system" data-state="idle" role="region" aria-label="Try GPT Voice" aria-describedby="demo-desc">
+        <p class="sr-only" id="demo-desc">A scripted demo. No microphone or network is used. Press the keys below or Control Option Space to start and stop.</p>
+
+        <div class="stage">
+          <div class="menubar">
+            <span class="mb-left" aria-hidden="true"><b>scratch</b><span>File</span><span>Edit</span><span class="hide-xs">View</span></span>
+            <span class="mb-right">
+              <span class="mb-app" aria-hidden="true">
+                <svg viewBox="0 0 100 100"><rect class="b" x="14" y="38" width="10" height="24" rx="5"/><rect class="b" x="31" y="26" width="10" height="48" rx="5"/><rect class="b" x="48" y="14" width="10" height="72" rx="5"/><rect class="b" x="65" y="28" width="10" height="44" rx="5"/><rect class="b" x="82" y="40" width="10" height="20" rx="5"/></svg>
+              </span>
+              <button class="mb-btn" type="button" id="demo-settings-btn" aria-expanded="false" aria-controls="demo-settings" aria-label="Demo settings">
+                <svg class="i" aria-hidden="true"><use href="#i-regular-sliders-horizontal"/></svg>
+              </button>
+              <button class="mb-btn" type="button" id="demo-reset" aria-label="Reset demo">
+                <svg class="i" aria-hidden="true"><use href="#i-regular-arrow-counter-clockwise"/></svg>
+              </button>
+              <span class="mb-clock" aria-hidden="true">9:41</span>
+            </span>
+          </div>
+
+          <div class="settings" id="demo-settings" hidden>
+            <div class="set-row">
+              <span class="set-label" id="lbl-theme">Theme</span>
+              <div class="seg seg-icons" role="radiogroup" aria-labelledby="lbl-theme">
+                <button type="button" role="radio" aria-checked="true" data-theme-choice="system" aria-label="System"><svg class="i" aria-hidden="true"><use href="#i-regular-circle-half"/></svg></button>
+                <button type="button" role="radio" aria-checked="false" data-theme-choice="light" aria-label="Light"><svg class="i" aria-hidden="true"><use href="#i-regular-sun"/></svg></button>
+                <button type="button" role="radio" aria-checked="false" data-theme-choice="dark" aria-label="Dark"><svg class="i" aria-hidden="true"><use href="#i-regular-moon"/></svg></button>
+              </div>
+            </div>
+            <div class="set-row">
+              <span class="set-label" id="lbl-accent">Accent</span>
+              <div class="swatches" role="radiogroup" aria-labelledby="lbl-accent">
+                <button type="button" role="radio" aria-checked="true" data-accent-choice="graphite" aria-label="Graphite"></button>
+                <button type="button" role="radio" aria-checked="false" data-accent-choice="blue" aria-label="Blue"></button>
+                <button type="button" role="radio" aria-checked="false" data-accent-choice="violet" aria-label="Violet"></button>
+                <button type="button" role="radio" aria-checked="false" data-accent-choice="rose" aria-label="Rose"></button>
+                <button type="button" role="radio" aria-checked="false" data-accent-choice="amber" aria-label="Amber"></button>
+                <button type="button" role="radio" aria-checked="false" data-accent-choice="green" aria-label="Green"></button>
+                <button type="button" role="radio" aria-checked="false" data-accent-choice="teal" aria-label="Teal"></button>
+              </div>
+            </div>
+            <div class="set-row">
+              <span class="set-label" id="lbl-paste">Auto-paste</span>
+              <button type="button" class="switch" role="switch" aria-checked="true" aria-labelledby="lbl-paste" id="paste-switch"><span></span></button>
+            </div>
+            <div class="set-row">
+              <span class="set-label" id="lbl-scenario">Voice</span>
+              <div class="seg seg-icons" role="radiogroup" aria-labelledby="lbl-scenario">
+                <button type="button" role="radio" aria-checked="true" data-scenario="talk" aria-label="Talk"><svg class="i" aria-hidden="true"><use href="#i-regular-microphone"/></svg></button>
+                <button type="button" role="radio" aria-checked="false" data-scenario="silent" aria-label="Stay silent"><svg class="i" aria-hidden="true"><use href="#i-regular-microphone-slash"/></svg></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ws" role="group" aria-label="Demo chat app">
+            <div class="ws-chrome" aria-hidden="true">
+              <span class="lights"><i></i><i></i><i></i></span>
+            </div>
+            <div class="ws-body">
+              <p class="bubble">Tests pass on <code>main</code>. What next?</p>
+              <div class="composer" id="composer">
+                <div class="composer-text" id="composer-text" role="textbox" aria-readonly="true" aria-multiline="true" aria-label="Demo prompt" tabindex="0"><span class="caret" aria-hidden="true"></span><span class="placeholder">Ask anything</span></div>
+                <div class="composer-bar">
+                  <button class="paste-btn" type="button" id="paste-btn" hidden>
+                    <svg class="i" aria-hidden="true"><use href="#i-regular-clipboard-text"/></svg>
+                    Paste <kbd>⌘V</kbd>
+                  </button>
+                  <span class="send-wrap">
+                    <span class="send-tip" id="send-tip" role="tooltip">You send. It never does.</span>
+                    <button class="send" type="button" aria-describedby="send-tip" aria-label="Send (does nothing in this demo)">
+                      <svg class="i" aria-hidden="true"><use href="#i-regular-arrow-up"/></svg>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="voice" id="voice" aria-hidden="true">
+            <svg class="i voice-quote" aria-hidden="true"><use href="#i-regular-quotes"/></svg>
+            <span class="voice-text" id="voice-text"></span>
+          </p>
+
+          <div class="dock">
+            <div class="pill is-hidden" id="pill" role="group" aria-label="Dictation status">
+              <div class="pill-inner" id="pill-inner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="keys-row">
+          <button class="keys" type="button" id="keys" aria-label="Start dictation (Control Option Space)">
+            <span class="key" aria-hidden="true">⌃</span>
+            <span class="key" aria-hidden="true">⌥</span>
+            <span class="key key-space" aria-hidden="true"></span>
+          </button>
+          <p class="keys-hint" id="keys-hint" aria-hidden="true">Try it</p>
+        </div>
+
+        <p class="sr-only" id="demo-live" role="status" aria-live="polite"></p>
+        <noscript><p class="noscript">The demo needs JavaScript.</p></noscript>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features: bento -->
+  <section class="features" id="features" aria-labelledby="features-title">
+    <div class="wrap">
+      <h2 id="features-title" class="display h-md section-title reveal">Small app. Careful details.</h2>
+
+      <div class="bento">
+        <article class="cell c-lands reveal">
+          <div class="cell-visual vis-lands" aria-hidden="true">
+            <div class="mini-field">
+              <span class="mini-hl">Make the retry backoff exponential, with jitter.</span><span class="mini-caret"></span>
+            </div>
+            <span class="mini-pill mini-ok">
+              <svg class="i ok"><use href="#i-fill-check-circle"/></svg>Pasted
+            </span>
+          </div>
+          <div class="cell-text">
+            <h3>Lands at your cursor</h3>
+            <p>Any app with a text field. Without Accessibility, it copies for <kbd>⌘V</kbd>.</p>
+          </div>
+        </article>
+
+        <article class="cell c-keys reveal">
+          <div class="cell-visual vis-keys" aria-hidden="true">
+            <span class="kc">⌃</span><span class="kc">⌥</span><span class="kc kc-wide"></span>
+          </div>
+          <div class="cell-text">
+            <h3>One shortcut</h3>
+            <p>Press, talk, press again. Change it anytime.</p>
+          </div>
+        </article>
+
+        <article class="cell c-enter reveal">
+          <div class="cell-visual vis-enter" aria-hidden="true">
+            <span class="kc kc-return"><svg class="i"><use href="#i-regular-arrow-u-down-left"/></svg></span>
+          </div>
+          <div class="cell-text">
+            <h3>Never hits Enter</h3>
+            <p>It pastes. You review and send.</p>
+          </div>
+        </article>
+
+        <article class="cell c-sign reveal">
+          <div class="cell-visual vis-term" aria-hidden="true">
+            <span class="term"><svg class="i"><use href="#i-regular-terminal-window"/></svg><code>codex login</code></span>
+          </div>
+          <div class="cell-text">
+            <h3>Your ChatGPT sign-in</h3>
+            <p>Reuses the Codex CLI session. No API key.</p>
+          </div>
+        </article>
+
+        <article class="cell c-private reveal">
+          <div class="cell-visual vis-icon" aria-hidden="true">
+            <span class="icon-disc"><svg class="i"><use href="#i-regular-lock-simple"/></svg></span>
+          </div>
+          <div class="cell-text">
+            <h3>No transcript history</h3>
+            <p>Recordings are temporary files on your Mac.</p>
+          </div>
+        </article>
+
+        <article class="cell c-look reveal">
+          <div class="cell-visual vis-swatches">
+            <div class="mini-swatches" role="group" aria-label="Try an accent">
+              <button type="button" data-accent-try="graphite" aria-label="Graphite" aria-pressed="true"></button>
+              <button type="button" data-accent-try="blue" aria-label="Blue" aria-pressed="false"></button>
+              <button type="button" data-accent-try="violet" aria-label="Violet" aria-pressed="false"></button>
+              <button type="button" data-accent-try="rose" aria-label="Rose" aria-pressed="false"></button>
+              <button type="button" data-accent-try="amber" aria-label="Amber" aria-pressed="false"></button>
+              <button type="button" data-accent-try="green" aria-label="Green" aria-pressed="false"></button>
+              <button type="button" data-accent-try="teal" aria-label="Teal" aria-pressed="false"></button>
+            </div>
+          </div>
+          <div class="cell-text">
+            <h3>Feels native</h3>
+            <p>Light, dark and seven accents. Try one.</p>
+          </div>
+        </article>
+
+        <article class="cell c-menubar reveal">
+          <div class="cell-text">
+            <h3>Lives in the menu bar</h3>
+            <p>Out of the way until you need it.</p>
+          </div>
+          <div class="shot-wrap">
+            <img src="assets/shots/appearance-dark.png" width="820" height="600" alt="GPT Voice settings window, Appearance page, in dark mode." loading="lazy" decoding="async">
+          </div>
+        </article>
+
+        <article class="cell c-story reveal">
+          <svg class="i story-quote" aria-hidden="true"><use href="#i-regular-quotes"/></svg>
+          <p class="story">Built after moving from the Codex app to T3 Code and missing ChatGPT dictation.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Film -->
+  <section class="film" id="film" aria-labelledby="film-title">
+    <div class="wrap">
+      <h2 id="film-title" class="display h-md section-title reveal">See it in action.</h2>
+      <div class="film-frame reveal" id="film-frame">
+        <video id="film-video" preload="none" playsinline controls aria-label="GPT Voice promo film">
+          <source data-video-src type="video/mp4">
+        </video>
+        <button class="film-play" type="button" id="film-play" aria-label="Play the GPT Voice film">
+          <span class="film-play-disc"><svg class="i" aria-hidden="true"><use href="#i-fill-play"/></svg></span>
+        </button>
+        <div class="film-missing" id="film-missing" hidden>
+          <img src="assets/app-icon-512.png" width="56" height="56" alt="">
+          <p>The film isn't available right now.</p>
+        </div>
+      </div>
+      <p class="film-credit reveal">Staged demo with synthetic speech by <a href="https://elevenlabs.io/">ElevenLabs</a> · Keyboard footage: <a href="https://www.magnific.com/">Designed by Magnific</a> · <a href="https://github.com/entropyconquers/gpt-voice/blob/main/THIRD_PARTY_NOTICES.md">All media credits</a></p>
+    </div>
+  </section>
+
+  <!-- Install + FAQ -->
+  <section class="install" id="install" aria-labelledby="install-title">
+    <div class="wrap">
+      <h2 id="install-title" class="display h-md section-title reveal">Get started.</h2>
+      <div class="install-grid">
+        <ol class="steps reveal">
+          <li class="step">
+            <span class="step-icon" aria-hidden="true"><svg class="i"><use href="#i-regular-terminal-window"/></svg></span>
+            <div><h3>Sign in with Codex CLI</h3><p>Install <a href="https://github.com/openai/codex">Codex CLI</a>, then run <code>codex login</code>.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-icon" aria-hidden="true"><svg class="i"><use href="#i-regular-download-simple"/></svg></span>
+            <div data-when="ready" hidden><h3>Download GPT Voice</h3><p>Drag it to Applications and allow the microphone.</p></div>
+            <div data-when="pending"><h3>Mac download coming soon</h3><p>Signing is in progress. <a data-link="source" href="https://github.com/entropyconquers/gpt-voice#build-from-source">Build from source</a> for now.</p></div>
+          </li>
+          <li class="step">
+            <span class="step-icon step-keys" aria-hidden="true">⌃⌥</span>
+            <div><h3>Press <kbd>⌃</kbd><kbd>⌥</kbd><kbd>Space</kbd></h3><p>Talk, then press it again.</p></div>
+          </li>
+        </ol>
+
+        <div class="faq reveal">
+          <details>
+            <summary>Do I need an API key?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+            <div class="answer"><p>No. It reuses the file-backed ChatGPT session from Codex CLI.</p></div>
+          </details>
+          <details>
+            <summary>Where does my audio go?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+            <div class="answer"><p>To ChatGPT for transcription, over a private route that can change. Recordings are temporary files on your Mac. There's no offline mode.</p></div>
+          </details>
+          <details>
+            <summary>Will my ChatGPT plan work?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+            <div class="answer"><p>Access depends on your ChatGPT account. Limits can vary, and this private route can change.</p></div>
+          </details>
+          <details>
+            <summary>Which Macs?<svg class="i chev" aria-hidden="true"><use href="#i-regular-caret-down"/></svg></summary>
+            <div class="answer"><p>macOS 13 or later, Apple Silicon and Intel. One download covers both.</p></div>
+          </details>
+        </div>
+      </div>
+
+      <div class="outro reveal">
+        <img class="outro-icon" src="assets/app-icon-512.png" width="64" height="64" alt="">
+        <div class="cta-row">
+          <a class="btn btn-ink btn-lg dl" data-link="download" data-when="ready" hidden href="#install">
+            <svg class="i dl-icon" aria-hidden="true"><use href="#i-regular-download-simple"/></svg>
+            <span>Download for Mac</span>
+          </a>
+          <a class="btn btn-quiet btn-lg star" data-link="repo" href="https://github.com/entropyconquers/gpt-voice">
+            <svg class="i" aria-hidden="true"><use href="#i-regular-github-logo"/></svg>
+            <span>Star on GitHub</span>
+            <span class="star-icon" aria-hidden="true">
+              <svg class="i"><use href="#i-regular-star"/></svg>
+              <svg class="i i-fill"><use href="#i-fill-star"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-row">
+    <p class="footer-brand">
+      <svg class="brand-mark footer-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <rect width="100" height="100" rx="22.6"/>
+        <rect class="b" x="18.3" y="39.8" width="7.45" height="20.3" rx="3.72"/>
+        <rect class="b" x="32.3" y="30.5" width="7.45" height="39" rx="3.72"/>
+        <rect class="b" x="46.4" y="22.7" width="7.45" height="54.7" rx="3.72"/>
+        <rect class="b" x="60.4" y="32.8" width="7.45" height="34.5" rx="3.72"/>
+        <rect class="b" x="74.3" y="41.4" width="7.45" height="17.2" rx="3.72"/>
+      </svg>
+      GPT Voice
+    </p>
+    <nav aria-label="Project links" class="footer-links">
+      <a data-link="repo" href="https://github.com/entropyconquers/gpt-voice">GitHub</a>
+      <a data-link="release" href="https://github.com/entropyconquers/gpt-voice/releases">Releases</a>
+      <a href="CREDITS.txt">Credits</a>
+    </nav>
+    <p class="fine">Independent open-source project, not affiliated with OpenAI. Code is MIT-licensed; third-party assets keep their own terms.</p>
+  </div>
+</footer>
+</body>
+</html>

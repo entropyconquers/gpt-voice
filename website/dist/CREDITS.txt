@@ -1,0 +1,17 @@
+GPT Voice website credits
+=========================
+
+GPT Voice source code
+  MIT License. See the LICENSE file in the GitHub repository.
+
+Phosphor Icons (inline SVG symbols in index.html)
+  MIT License, Copyright (c) 2023 Phosphor Icons.
+  Full text: assets/LICENSE-phosphor.txt
+  https://github.com/phosphor-icons/core
+
+App screenshots, app icon and promo film
+  Captured from or made for GPT Voice. Third-party material inside the
+  film (music, voice, footage) is credited separately in the repository.
+
+GPT Voice is an independent project, not affiliated with or endorsed by
+OpenAI. ChatGPT and Codex are trademarks of OpenAI.

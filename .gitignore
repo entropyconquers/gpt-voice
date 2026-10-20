@@ -1,0 +1,37 @@
+.build/
+/dist/
+.DS_Store
+investigation/codex-protocol/
+investigation/*evidence*.json
+investigation/opus-*.log
+investigation/opus-*.jsonl
+investigation/dictation-subset/
+investigation/protocol-slice/
+investigation/rea-evidence.json.gz
+investigation/*.wav
+investigation/*.aiff
+.local-signing-identity
+
+# Local research, captures, credentials, and build products
+.local/
+investigation/
+promo/
+.local-*
+*.dmg
+*.zip
+*.p12
+*.p8
+*.pem
+*.cer
+*.key
+.env
+.env.*
+node_modules/
+__pycache__/
+.swiftpm/
+website/.git/
+website/.sites-*/
+website/.openai/
+
+# Launch drafts remain local until the author posts them.
+marketing/

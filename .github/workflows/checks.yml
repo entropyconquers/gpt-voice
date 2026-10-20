@@ -1,0 +1,18 @@
+name: Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  swift:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and test
+        run: swift test
+      - name: Check release scripts
+        run: |
+          bash -n scripts/build.sh
+          python3 -m py_compile scripts/package-dmg.py
