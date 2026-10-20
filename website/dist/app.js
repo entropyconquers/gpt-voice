@@ -523,7 +523,9 @@
 
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(function (entries) {
-        invite.inView = entries[entries.length - 1].isIntersecting;
+        var entry = entries[entries.length - 1];
+        // The first callback fires even below the threshold, so check the ratio as well.
+        invite.inView = entry.isIntersecting && entry.intersectionRatio >= 0.35;
         updateInvite();
       }, { threshold: 0.35 }).observe(demo);
     } else {
