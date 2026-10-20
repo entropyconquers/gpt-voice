@@ -6,7 +6,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/entropyconquers/gpt-voice/releases">Download for Mac</a> ·
+  <a href="https://entropyconquers.github.io/gpt-voice/">Website</a> ·
+  <a href="https://github.com/entropyconquers/gpt-voice/releases">Mac releases</a> ·
   <a href="#see-it-in-action">Watch the demo</a> ·
   <a href="LICENSE">MIT license</a>
 </p>
@@ -23,7 +24,7 @@ GPT Voice uses your existing ChatGPT sign-in through Codex CLI. It needs no sepa
 
 ## See it in action
 
-[![Watch the 43-second GPT Voice demo](docs/assets/video-poster.jpg)](docs/media/GPT-Voice-Promo.mp4)
+https://github.com/user-attachments/assets/36b7513d-20c9-493e-bf01-f5ebfedf5899
 
 [Watch or download the MP4](docs/media/GPT-Voice-Promo.mp4).
 This is a staged promo with synthetic speech by [ElevenLabs](https://elevenlabs.io/), not a transcription benchmark.
@@ -40,9 +41,7 @@ Keyboard footage: [Designed by Magnific](https://www.magnific.com/). [All media 
 5. Grant microphone access. Grant Accessibility access for automatic paste, or choose manual paste.
 6. Choose a shortcut and try the practice recording.
 
-**Release status:** Developer ID signing and Apple notarization are pending. The current local build is ad hoc signed.
-It cannot offer the same first-launch experience as a notarized Mac app. See each release's signing status before downloading.
-Do not disable Gatekeeper or other macOS protections.
+**Mac download:** Pending Apple signing and notarization. [Build from source](#build-from-source) while the release is prepared.
 
 ## A small tool that stays out of the way
 
