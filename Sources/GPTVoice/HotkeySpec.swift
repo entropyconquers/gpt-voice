@@ -11,7 +11,7 @@ struct HotkeySpec: Codable, Equatable, Hashable {
         var message: String {
             switch self {
             case .needsModifier: return "Use Control, Option, or Command with a key."
-            case .modifierOnly: return "Add a key to the modifiers."
+            case .modifierOnly: return "Hold Option, Control, or Shift by itself, or add another key. Command cannot be the whole shortcut."
             case .reserved: return "macOS uses this shortcut. Choose another one."
             }
         }
@@ -22,6 +22,8 @@ struct HotkeySpec: Codable, Equatable, Hashable {
 
     static let `default` = HotkeySpec(keyCode: UInt32(kVK_Space), modifiers: UInt32(controlKey | optionKey))
     static let commandSpace = HotkeySpec(keyCode: UInt32(kVK_Space), modifiers: UInt32(cmdKey))
+    /// Hold the left Option key to record. Releasing it pastes the transcript.
+    static let leftOption = HotkeySpec(keyCode: UInt32(kVK_Option), modifiers: 0)
 
     init(keyCode: UInt32, modifiers: UInt32) {
         self.keyCode = keyCode
@@ -45,6 +47,19 @@ struct HotkeySpec: Codable, Equatable, Hashable {
         kVK_Command, kVK_RightCommand, kVK_Shift, kVK_RightShift, kVK_Option, kVK_RightOption,
         kVK_Control, kVK_RightControl, kVK_CapsLock, kVK_Function
     ].reduce(into: []) { $0.insert(UInt32($1)) }
+
+    /// Modifier keys that can be a shortcut when held alone. Command is excluded
+    /// because releasing it after an abandoned shortcut is a common accident.
+    static let tappableModifierKeyCodes: Set<UInt32> = [
+        kVK_Option, kVK_RightOption, kVK_Control, kVK_RightControl,
+        kVK_Shift, kVK_RightShift, kVK_Function
+    ].reduce(into: []) { $0.insert(UInt32($1)) }
+
+    /// Device-dependent bits from IOLLEvent.h. Caps Lock is omitted so a latched
+    /// Caps Lock does not turn a hold into a chord.
+    static let deviceModifierMasks: UInt =
+        0x0000_0001 | 0x0000_0002 | 0x0000_0004 | 0x0000_0008 | 0x0000_0010 |
+        0x0000_0020 | 0x0000_0040 | 0x0000_2000 | 0x0080_0000
 
     private static let reservedShortcuts: Set<HotkeySpec> = [
         HotkeySpec(keyCode: UInt32(kVK_Tab), modifiers: UInt32(cmdKey)),
@@ -70,16 +85,67 @@ struct HotkeySpec: Codable, Equatable, Hashable {
 
     /// The first reason this shortcut cannot be used, or nil when it is acceptable.
     var problem: Problem? {
+        if isModifierHold { return nil }
         if Self.modifierKeyCodes.contains(keyCode) { return .modifierOnly }
         if modifiers & Self.primaryModifiers == 0 { return .needsModifier }
         if Self.reservedShortcuts.contains(self) { return .reserved }
         return nil
     }
 
+    /// True when this shortcut is a hold of one modifier key. Release pastes the transcript.
+    var isModifierHold: Bool {
+        modifiers == 0 && Self.tappableModifierKeyCodes.contains(keyCode)
+    }
+
+    /// Device-dependent bit for `keyCode`, or zero when the key has none.
+    static func deviceMask(for keyCode: UInt32) -> UInt {
+        switch Int(keyCode) {
+        case kVK_Control: return 0x0000_0001
+        case kVK_Shift: return 0x0000_0002
+        case kVK_RightShift: return 0x0000_0004
+        case kVK_Command: return 0x0000_0008
+        case kVK_RightCommand: return 0x0000_0010
+        case kVK_Option: return 0x0000_0020
+        case kVK_RightOption: return 0x0000_0040
+        case kVK_RightControl: return 0x0000_2000
+        case kVK_Function: return 0x0080_0000
+        default: return 0
+        }
+    }
+
+    /// Inverse of `deviceMask`. Returns zero when `mask` is not exactly one known bit.
+    static func keyCode(forDeviceMask mask: UInt) -> UInt32 {
+        switch mask {
+        case 0x0000_0001: return UInt32(kVK_Control)
+        case 0x0000_0002: return UInt32(kVK_Shift)
+        case 0x0000_0004: return UInt32(kVK_RightShift)
+        case 0x0000_0008: return UInt32(kVK_Command)
+        case 0x0000_0010: return UInt32(kVK_RightCommand)
+        case 0x0000_0020: return UInt32(kVK_Option)
+        case 0x0000_0040: return UInt32(kVK_RightOption)
+        case 0x0000_2000: return UInt32(kVK_RightControl)
+        case 0x0080_0000: return UInt32(kVK_Function)
+        default: return 0
+        }
+    }
+
+    /// True when `rawFlags` contains this key's device bit and no other device modifier.
+    static func isSoleDeviceModifier(keyCode: UInt32, rawFlags: UInt) -> Bool {
+        let mask = deviceMask(for: keyCode)
+        guard mask != 0 else { return false }
+        return rawFlags & deviceModifierMasks == mask
+    }
+
+    /// True when a device modifier other than `keyCode` is down.
+    static func hasOtherDeviceModifier(than keyCode: UInt32, rawFlags: UInt) -> Bool {
+        rawFlags & deviceModifierMasks & ~deviceMask(for: keyCode) != 0
+    }
+
     var isValid: Bool { problem == nil }
 
     /// Modifier symbols in macOS order, then the key name. For keycap display.
     var keycaps: [String] {
+        if let tap = modifierTapLabel { return [tap.symbol] }
         var caps: [String] = []
         if modifiers & UInt32(controlKey) != 0 { caps.append("⌃") }
         if modifiers & UInt32(optionKey) != 0 { caps.append("⌥") }
@@ -94,6 +160,7 @@ struct HotkeySpec: Codable, Equatable, Hashable {
 
     /// Spoken label for VoiceOver, for example "Control Option Space".
     var accessibilityLabel: String {
+        if let tap = modifierTapLabel { return tap.name }
         var words: [String] = []
         if modifiers & UInt32(controlKey) != 0 { words.append("Control") }
         if modifiers & UInt32(optionKey) != 0 { words.append("Option") }
@@ -101,6 +168,20 @@ struct HotkeySpec: Codable, Equatable, Hashable {
         if modifiers & UInt32(cmdKey) != 0 { words.append("Command") }
         words.append(keyName)
         return words.joined(separator: " ")
+    }
+
+    private var modifierTapLabel: (symbol: String, name: String)? {
+        guard isModifierHold else { return nil }
+        switch Int(keyCode) {
+        case kVK_Option: return ("Left ⌥", "Left Option")
+        case kVK_RightOption: return ("Right ⌥", "Right Option")
+        case kVK_Control: return ("Left ⌃", "Left Control")
+        case kVK_RightControl: return ("Right ⌃", "Right Control")
+        case kVK_Shift: return ("Left ⇧", "Left Shift")
+        case kVK_RightShift: return ("Right ⇧", "Right Shift")
+        case kVK_Function: return ("Fn", "Function")
+        default: return nil
+        }
     }
 
     /// AppKit modifier flags, for menu item shortcut hints.

@@ -19,18 +19,27 @@ struct PasteTarget {
                            focusedElement: focus.element, focusedWindow: focus.window)
     }
 
-    /// True when the same process is frontmost and any captured focus still matches.
+    /// True when the captured app is still frontmost.
+    /// Accessibility element objects are not stable across queries. Comparing them
+    /// made a field that never changed look like a different target, so the
+    /// transcript was copied and never inserted.
     func isStillFrontmost() -> Bool {
-        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == processID else { return false }
-        guard focusedElement != nil || focusedWindow != nil else { return true }
-        let now = Self.focusedAttributes(of: processID)
-        if let focusedWindow {
-            guard let window = now.window, CFEqual(focusedWindow, window) else { return false }
-        }
-        if let focusedElement {
-            guard let element = now.element, CFEqual(focusedElement, element) else { return false }
-        }
-        return true
+        Self.deliveryStillValid(capturedPID: processID,
+                                frontmostPID: NSWorkspace.shared.frontmostApplication?.processIdentifier)
+    }
+
+    static func deliveryStillValid(capturedPID: pid_t, frontmostPID: pid_t?) -> Bool {
+        frontmostPID == capturedPID
+    }
+
+    /// Inserts text at the caret. Does not read or replace the rest of the field, and does not use the clipboard.
+    static func insertSelectedText(_ text: String, into pid: pid_t) -> Bool {
+        guard !text.isEmpty, let element = focusedElement(of: pid) else { return false }
+        return AXUIElementSetAttributeValue(element, kAXSelectedTextAttribute as CFString, text as CFString) == .success
+    }
+
+    static func focusedElement(of pid: pid_t) -> AXUIElement? {
+        copyElement(AXUIElementCreateApplication(pid), kAXFocusedUIElementAttribute)
     }
 
     private static func focusedAttributes(of pid: pid_t) -> (element: AXUIElement?, window: AXUIElement?) {

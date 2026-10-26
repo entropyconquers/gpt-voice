@@ -17,6 +17,21 @@ final class GlobalShortcutTests: XCTestCase {
     }
 
     @MainActor
+    func testModifierTapWithoutInputMonitoringDoesNotReplaceTheCurrentShortcut() throws {
+        if InputMonitoringPermission.isGranted {
+            throw XCTSkip("Input Monitoring is granted, so a modifier hold can register.")
+        }
+        let shortcut = GlobalShortcut(onPress: {})
+        defer { shortcut.unregister() }
+        let current = HotkeySpec(keyCode: UInt32(kVK_F18), modifiers: UInt32(controlKey | optionKey | shiftKey))
+        try shortcut.replace(with: current)
+        XCTAssertThrowsError(try shortcut.replace(with: .leftOption)) { error in
+            XCTAssertEqual(error as? GlobalShortcut.RegistrationError, .inputMonitoring)
+        }
+        XCTAssertEqual(shortcut.current, current)
+    }
+
+    @MainActor
     func testCommandSpaceUsesCurrentSystemSettings() async throws {
         let shortcut = GlobalShortcut(onPress: {})
         defer { shortcut.unregister() }

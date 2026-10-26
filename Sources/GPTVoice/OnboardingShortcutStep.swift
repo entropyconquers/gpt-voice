@@ -6,7 +6,9 @@ struct OnboardingShortcutStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             OnboardingHeader(title: "Choose a shortcut",
-                             summary: "Press it once to start dictation. Press it again to stop.")
+                             summary: model.preferences.hotkey.isModifierHold
+                                 ? "Hold it to record. Let go to paste the transcript."
+                                 : "Press it once to start dictation. Press it again to stop.")
             ShortcutPanel(model: model)
         }
     }

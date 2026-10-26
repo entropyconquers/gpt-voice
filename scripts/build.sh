@@ -80,6 +80,7 @@ cat > "$app_dir/Contents/Info.plist" <<'PLIST'
 <key>NSHighResolutionCapable</key><true/>
 <key>NSPrincipalClass</key><string>NSApplication</string>
 <key>NSMicrophoneUsageDescription</key><string>Record your voice when you start dictation. Audio is sent to ChatGPT to convert speech to text.</string>
+<key>NSInputMonitoringUsageDescription</key><string>Detect when you hold the dictation shortcut, including Option by itself. Typed characters are not recorded or stored.</string>
 </dict></plist>
 PLIST
 /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $app_version" "$app_dir/Contents/Info.plist"

@@ -25,6 +25,10 @@ final class ShortcutRecorderNSView: NSView {
         }
     }
     private var observers: [NSObjectProtocol] = []
+    /// Modifier key held alone while recording. Captured on release.
+    private var pendingTap: UInt32?
+    /// Device-dependent modifier bits at the previous flags event.
+    private var recordedDeviceFlags: UInt = 0
     private static let radius: CGFloat = 6
 
     override init(frame frameRect: NSRect) {
@@ -62,7 +66,7 @@ final class ShortcutRecorderNSView: NSView {
         path.lineWidth = isRecording ? 2 : 1
         path.stroke()
 
-        let text = isRecording ? "Press the new keys. Esc cancels." : "Click to record"
+        let text = isRecording ? "Press keys, or hold Option. Esc cancels." : "Click to record"
         let color: NSColor = !isEnabled ? .tertiaryLabelColor : (isRecording ? .labelColor : .secondaryLabelColor)
         let style = NSMutableParagraphStyle()
         style.alignment = .center
@@ -88,6 +92,43 @@ final class ShortcutRecorderNSView: NSView {
         window?.makeFirstResponder(self)
         startRecording()
         return true
+    }
+
+    override func flagsChanged(with event: NSEvent) {
+        guard isRecording else {
+            super.flagsChanged(with: event)
+            return
+        }
+        let raw = UInt(event.modifierFlags.rawValue)
+        let current = raw & HotkeySpec.deviceModifierMasks
+        let changed = recordedDeviceFlags ^ current
+        recordedDeviceFlags = current
+        guard changed != 0, changed & (changed - 1) == 0 else {
+            if changed != 0 { pendingTap = nil }
+            return
+        }
+        let code = HotkeySpec.keyCode(forDeviceMask: changed)
+        let down = current & changed != 0
+        guard down else {
+            guard pendingTap == code else { return }
+            pendingTap = nil
+            let spec = HotkeySpec(keyCode: code, modifiers: 0)
+            if let problem = spec.problem {
+                onProblem(problem)
+                return
+            }
+            if onCapture(spec) { stopRecording() }
+            return
+        }
+        if HotkeySpec.isSoleDeviceModifier(keyCode: code, rawFlags: raw),
+           HotkeySpec.tappableModifierKeyCodes.contains(code) {
+            pendingTap = code
+        } else {
+            pendingTap = nil
+            if HotkeySpec.isSoleDeviceModifier(keyCode: code, rawFlags: raw) {
+                onProblem(.modifierOnly)
+            }
+        }
     }
 
     override func keyDown(with event: NSEvent) {
@@ -135,6 +176,7 @@ final class ShortcutRecorderNSView: NSView {
     }
 
     private func handle(_ event: NSEvent) {
+        pendingTap = nil
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if Int(event.keyCode) == kVK_Escape, flags.intersection([.command, .option, .control, .shift]).isEmpty {
             stopRecording()
@@ -150,11 +192,15 @@ final class ShortcutRecorderNSView: NSView {
 
     private func startRecording() {
         guard isEnabled, !isRecording else { return }
+        recordedDeviceFlags = UInt(NSEvent.modifierFlags.rawValue) & HotkeySpec.deviceModifierMasks
+        pendingTap = nil
         isRecording = true
         onBegin()
     }
 
     private func stopRecording() {
+        pendingTap = nil
+        recordedDeviceFlags = 0
         guard isRecording else { return }
         isRecording = false
         onEnd()

@@ -12,6 +12,8 @@ final class PasteCoordinator {
 
     private let pasteboard: NSPasteboard
     private var target: PasteTarget?
+    /// Captured when the shortcut starts, before the overlay or a clipboard restore can change the frontmost app.
+    private var pendingTarget: PasteTarget?
     private var snapshot: ClipboardSnapshot?
     private var delivery: Task<PasteOutcome, Never>?
 
@@ -27,16 +29,28 @@ final class PasteCoordinator {
         while let pending = delivery { _ = await pending.value }
     }
 
+    /// Remembers the frontmost app at the shortcut, before any later UI.
+    func noteIntendedTarget() {
+        pendingTarget = PasteTarget.captureFrontmost()
+    }
+
     /// Captures the paste target and the clipboard. Call at recording start.
     func beginSession() {
-        target = PasteTarget.captureFrontmost()
+        target = pendingTarget ?? PasteTarget.captureFrontmost()
+        pendingTarget = nil
         snapshot = ClipboardSnapshot.capture(pasteboard)
     }
 
-    /// Drops the captured target and clipboard, for example after Cancel.
+    /// Drops the captured target and clipboard after delivery.
+    /// The next recording's intended target is left alone.
     func endSession() {
         target = nil
         snapshot = nil
+    }
+
+    /// Drops a target noted for a recording that was cancelled before it started.
+    func discardIntendedTarget() {
+        pendingTarget = nil
     }
 
     /// Explicit user Copy. Writes the original transcript.
@@ -58,6 +72,14 @@ final class PasteCoordinator {
     }
 
     private func performDelivery(text: String, automaticPaste: Bool) async -> PasteOutcome {
+        let insertable = TranscriptText.forAutomaticPaste(text)
+        if automaticPaste,
+           AccessibilityPermission.check(),
+           let target, target.isStillFrontmost(),
+           PasteTarget.insertSelectedText(insertable, into: target.processID) {
+            return .pasted(appName: target.appName)
+        }
+
         if let snapshot, pasteboard.changeCount != snapshot.changeCount {
             return .preservedNewerClipboard
         }

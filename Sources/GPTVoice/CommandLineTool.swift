@@ -16,6 +16,7 @@ enum CommandLineTool {
             "appVersion": appVersion,
             "microphone": microphoneName(AVCaptureDevice.authorizationStatus(for: .audio)),
             "accessibility": AccessibilityPermission.check(),
+            "inputMonitoring": InputMonitoringPermission.isGranted,
             "codexCLIAvailable": CodexAuthentication.cliAvailable,
             "bundledFonts": FontRegistration.fontAvailability
         ]
