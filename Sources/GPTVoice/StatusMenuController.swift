@@ -1,7 +1,7 @@
 import AppKit
 import Combine
 
-/// The always-visible menu bar item. Rebuilds its menu from model state each time it opens.
+/// The optional menu bar item. Rebuilds its menu from model state each time it opens.
 /// Opening the menu does not activate the app, so the paste target stays frontmost.
 @MainActor
 final class StatusMenuController: NSObject, NSMenuDelegate {
@@ -10,6 +10,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
     private let menu: NSMenu
     private var phaseObserver: AnyCancellable?
+    private var visibilityObserver: AnyCancellable?
+    var isVisible: Bool { statusItem.isVisible }
 
     init(model: AppModel, windows: WindowCoordinator) {
         self.model = model
@@ -20,7 +22,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.delegate = self
         menu.autoenablesItems = false
         statusItem.menu = menu
-        statusItem.isVisible = true
+        statusItem.isVisible = model.preferences.showMenuBarIcon
+        visibilityObserver = model.preferences.$showMenuBarIcon
+            .sink { [weak self] visible in self?.statusItem.isVisible = visible }
         updateIcon(for: model.phase)
         phaseObserver = model.$phase
             .removeDuplicates()

@@ -53,6 +53,7 @@ If macOS shows a verification warning, ignore it and open **System Settings → 
 - Onboarding with permission recovery and an in-app practice step.
 - System, Light and Dark themes, seven accent colors and top or bottom pill placement.
 - Optional sound cues and launch at login. Launch at login starts off.
+- Optional menu-bar icon under Preferences. When hidden, reopen the running app from Applications to access Settings.
 - Short result notices that fade away. Local transcript history with copy and delete controls.
 
 History saves successful transcriptions on this Mac with their date, time, and known destination app. Copy any entry, delete one, or clear all.

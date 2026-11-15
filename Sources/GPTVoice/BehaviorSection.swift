@@ -16,6 +16,11 @@ struct BehaviorSection: View {
 
     var body: some View {
         SettingsGroup {
+            SettingsRow(title: "Show menu bar icon",
+                        detail: "When hidden, reopen GPT Voice from Applications to access Settings.") {
+                AppToggle(label: "Show menu bar icon", isOn: $preferences.showMenuBarIcon)
+                    .disabled(!model.canChangeSettings)
+            }
             SettingsRow(title: "Paste automatically",
                         detail: model.accessibilityTrusted ? nil : "Needs Accessibility. Until then, text is copied.") {
                 AppToggle(label: "Paste automatically",
