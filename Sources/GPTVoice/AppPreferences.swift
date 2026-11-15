@@ -6,6 +6,7 @@ import Foundation
 final class AppPreferences: ObservableObject {
     private enum Key {
         static let hotkey = "hotkey"
+        static let pillContents = "pillContents"
         static let automaticPaste = "automaticPaste"
         static let soundCues = "soundCues"
         static let onboardingCompleted = "onboardingCompleted"
@@ -29,6 +30,12 @@ final class AppPreferences: ObservableObject {
 
     @Published var accent: AccentChoice {
         didSet { defaults.set(accent.rawValue, forKey: Key.accent) }
+    }
+
+    @Published var pillContents: PillContents {
+        didSet {
+            if let data = try? JSONEncoder().encode(pillContents) { defaults.set(data, forKey: Key.pillContents) }
+        }
     }
 
     private let defaults: UserDefaults
@@ -61,6 +68,8 @@ final class AppPreferences: ObservableObject {
         ])
         let stored = defaults.data(forKey: Key.hotkey).flatMap { try? JSONDecoder().decode(HotkeySpec.self, from: $0) }
         hotkey = stored.flatMap { $0.isValid ? $0 : nil } ?? .default
+        pillContents = defaults.data(forKey: Key.pillContents)
+            .flatMap { try? JSONDecoder().decode(PillContents.self, from: $0) } ?? .standard
         automaticPaste = defaults.bool(forKey: Key.automaticPaste)
         soundCues = defaults.bool(forKey: Key.soundCues)
         onboardingCompleted = defaults.bool(forKey: Key.onboardingCompleted)

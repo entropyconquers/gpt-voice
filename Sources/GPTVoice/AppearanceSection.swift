@@ -19,9 +19,39 @@ struct AppearanceSection: View {
                                  title: \.title, selection: $preferences.overlayPlacement)
                 }
             }
-            SettingsGroup(title: "Recording bar") {
-                AppearancePreview()
+            SettingsGroup(title: "Pill contents",
+                          footnote: "A recording indicator and loading circle always remain visible. Errors and copy instructions still appear.") {
+                SettingsRow(title: "Presets") {
+                    HStack(spacing: 6) {
+                        Button("Minimal") { preferences.pillContents = .minimal }
+                            .buttonStyle(AppButtonStyle(kind: .secondary, small: true))
+                        Button("Full") { preferences.pillContents = .standard }
+                            .buttonStyle(AppButtonStyle(kind: .secondary, small: true))
+                    }
+                }
+                pillOption("Waveform", keyPath: \.waveform)
+                pillOption("Timer", keyPath: \.timer)
+                pillOption("Recording dot", keyPath: \.recordingDot)
+                pillOption("Cancel button", keyPath: \.cancelButton)
+                pillOption("Stop button", keyPath: \.stopButton)
+                pillOption("Status labels", keyPath: \.statusText, showsDivider: false)
             }
+            SettingsGroup(title: "Recording bar") {
+                AppearancePreview(preferences: preferences)
+            }
+        }
+    }
+
+    private func pillOption(_ title: String, keyPath: WritableKeyPath<PillContents, Bool>,
+                            showsDivider: Bool = true) -> some View {
+        SettingsRow(title: title, showsDivider: showsDivider) {
+            AppToggle(label: title, isOn: Binding(get: { preferences.pillContents[keyPath: keyPath] },
+                set: { value in
+                    var contents = preferences.pillContents
+                    contents[keyPath: keyPath] = value
+                    if !contents.waveform && !contents.timer && !contents.recordingDot { contents.waveform = true }
+                    preferences.pillContents = contents
+                }))
         }
     }
 }

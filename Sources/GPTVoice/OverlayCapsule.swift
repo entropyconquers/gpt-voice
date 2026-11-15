@@ -4,14 +4,14 @@ import SwiftUI
 struct OverlayCapsule: View {
     let state: DictationOverlayState
     let actions: DictationOverlayActions
+    var contents: PillContents = .standard
 
     var body: some View {
         HStack(spacing: 10) {
-            OverlayCapsuleContent(state: state, actions: actions)
+            OverlayCapsuleContent(state: state, actions: actions, contents: contents)
         }
-        .padding(.leading, 14)
-        .padding(.trailing, 8)
-        .frame(height: 40)
+        .padding(.horizontal, 8)
+        .frame(minWidth: 40, minHeight: 40, maxHeight: 40)
         .fixedSize(horizontal: true, vertical: false)
         .modifier(OverlaySurface(shape: Capsule()))
         .accessibilityElement(children: .contain)

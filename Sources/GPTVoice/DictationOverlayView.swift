@@ -4,6 +4,7 @@ import SwiftUI
 struct DictationOverlayView: View {
     let state: DictationOverlayState
     let actions: DictationOverlayActions
+    var contents: PillContents = .standard
 
     var body: some View {
         switch state {
@@ -12,7 +13,7 @@ struct DictationOverlayView: View {
         case .hidden:
             EmptyView()
         default:
-            OverlayCapsule(state: state, actions: actions)
+            OverlayCapsule(state: state, actions: actions, contents: contents)
         }
     }
 }

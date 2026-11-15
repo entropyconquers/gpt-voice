@@ -4,6 +4,7 @@ import SwiftUI
 /// It spins only while shown. Under Reduce Motion it stays still, and the adjacent label carries the state.
 struct ActivityIndicator: View {
     var size: CGFloat = 12
+    var accessibilityText: String? = nil
     @State private var spinning = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -15,6 +16,7 @@ struct ActivityIndicator: View {
             .rotationEffect(.degrees(spinning ? 360 : 0))
             .animation(reduceMotion ? nil : .linear(duration: 0.9).repeatForever(autoreverses: false), value: spinning)
             .onAppear { spinning = !reduceMotion }
-            .accessibilityHidden(true)
+            .accessibilityHidden(accessibilityText == nil)
+            .accessibilityLabel(accessibilityText ?? "")
     }
 }

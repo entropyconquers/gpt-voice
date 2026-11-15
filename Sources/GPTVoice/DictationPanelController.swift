@@ -15,6 +15,7 @@ final class DictationPanelController: NSObject {
     private let reduceMotion: () -> Bool
     private var phaseObserver: AnyCancellable?
     private var meterObserver: AnyCancellable?
+    private var appearanceObserver: AnyCancellable?
     private var hideTimer: Timer?
     private var generation = 0
 
@@ -47,13 +48,13 @@ final class DictationPanelController: NSObject {
         self.presentation = presentation
         panel = DictationPanel()
         hosting = NSHostingView(rootView: ThemedRoot(preferences: model.preferences) {
-            DictationPanelView(presentation: presentation, actions: .preview, timing: timing)
+            DictationPanelView(presentation: presentation, preferences: model.preferences, actions: .preview, timing: timing)
         })
         super.init()
         hosting.sizingOptions = []
         hosting.autoresizingMask = [.width, .height]
         hosting.rootView = ThemedRoot(preferences: model.preferences) {
-            DictationPanelView(presentation: presentation, actions: actions, timing: timing)
+            DictationPanelView(presentation: presentation, preferences: model.preferences, actions: actions, timing: timing)
         }
         panel.contentView = hosting
         phaseObserver = model.$phase.dropFirst().sink { [weak self] phase in
@@ -64,6 +65,11 @@ final class DictationPanelController: NSObject {
                   case .recording(let previous, _) = self.presentation.state, elapsed >= previous else { return }
             self.presentation.state = .recording(elapsed: elapsed, level: level)
         }
+        appearanceObserver = model.preferences.$pillContents.combineLatest(model.preferences.$overlayPlacement)
+            .dropFirst().receive(on: DispatchQueue.main).sink { [weak self] _ in
+                guard let self, self.panel.isVisible, !self.presentation.exiting else { return }
+                self.show(self.presentation.state, announce: false)
+            }
         update(for: model.phase)
     }
 
@@ -99,6 +105,7 @@ final class DictationPanelController: NSObject {
         cancelTimer()
         phaseObserver?.cancel()
         meterObserver?.cancel()
+        appearanceObserver?.cancel()
         panel.orderOut(nil)
         presentation.state = .hidden
         presentation.exiting = false
@@ -125,7 +132,7 @@ final class DictationPanelController: NSObject {
         hideTimer = nil
     }
 
-    private func show(_ state: DictationOverlayState) {
+    private func show(_ state: DictationOverlayState, announce: Bool = true) {
         let wasVisible = panel.isVisible
         let size = measure(state)
         let mouse = NSEvent.mouseLocation
@@ -160,7 +167,7 @@ final class DictationPanelController: NSObject {
                 panel.animator().alphaValue = 1
             }
         }
-        if let announcement = state.announcement {
+        if announce, let announcement = state.announcement {
             NSAccessibility.post(element: NSApplication.shared, notification: .announcementRequested,
                                  userInfo: [.announcement: announcement,
                                             .priority: NSAccessibilityPriorityLevel.high.rawValue])
@@ -169,7 +176,7 @@ final class DictationPanelController: NSObject {
 
     private func measure(_ state: DictationOverlayState) -> NSSize {
         let view = NSHostingView(rootView: ThemedRoot(preferences: model.preferences) {
-            DictationOverlayView(state: state, actions: .preview)
+            DictationOverlayView(state: state, actions: .preview, contents: model.preferences.pillContents)
         })
         view.layoutSubtreeIfNeeded()
         let size = view.fittingSize

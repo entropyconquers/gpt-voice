@@ -6,6 +6,25 @@ import XCTest
 
 final class OverlayLifecycleTests: XCTestCase {
     @MainActor
+    func testMinimalPillResizesLiveAndKeepsSpinnerAndErrorMessages() async throws {
+        let fixture = Fixture(reduceMotion: true)
+        defer { fixture.cleanup() }
+        fixture.controller.update(for: .recording)
+        let full = fixture.controller.targetFrame
+        fixture.model.preferences.pillContents = .minimal
+        try await waitUntil { fixture.controller.targetFrame.width < full.width }
+        let minimal = fixture.controller.targetFrame
+        XCTAssertEqual(minimal.midX, full.midX, accuracy: 0.5)
+        XCTAssertGreaterThanOrEqual(minimal.width, 40)
+        fixture.controller.update(for: .transcribing)
+        XCTAssertEqual(fixture.controller.targetFrame.width, 40, accuracy: 1)
+        XCTAssertTrue(fixture.controller.isVisible)
+        fixture.controller.update(for: .failed(DictationFailure(transcriptionError: DictationError.emptyTranscript)))
+        XCTAssertGreaterThan(fixture.controller.targetFrame.width, 40)
+        XCTAssertEqual(fixture.controller.displayedState, .message(label: "No speech found", kind: .noSpeech))
+    }
+
+    @MainActor
     func testNoSpeechKeepsItsContentDuringFadeThenDisappears() async throws {
         let fixture = Fixture()
         defer { fixture.cleanup() }

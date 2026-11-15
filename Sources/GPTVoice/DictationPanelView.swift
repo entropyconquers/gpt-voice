@@ -3,6 +3,7 @@ import SwiftUI
 /// Keeps one surface while the window resizes and the content cross-fades.
 struct DictationPanelView: View {
     @ObservedObject var presentation: OverlayPresentation
+    @ObservedObject var preferences: AppPreferences
     let actions: DictationOverlayActions
     let timing: OverlayTiming
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -33,11 +34,10 @@ struct DictationPanelView: View {
             OverlayHelpContent(notice: notice, dismiss: actions.dismiss)
         } else {
             HStack(spacing: 10) {
-                OverlayCapsuleContent(state: presentation.state, actions: actions)
+                OverlayCapsuleContent(state: presentation.state, actions: actions, contents: preferences.pillContents)
             }
-            .padding(.leading, 14)
-            .padding(.trailing, 8)
-            .frame(height: 40)
+            .padding(.horizontal, 8)
+            .frame(minWidth: 40, minHeight: 40, maxHeight: 40)
             .fixedSize(horizontal: true, vertical: false)
         }
     }
