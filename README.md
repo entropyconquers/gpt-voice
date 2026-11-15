@@ -49,6 +49,7 @@ If macOS shows a verification warning, ignore it and open **System Settings → 
 
 - A configurable global shortcut. The default is **Control–Option–Space**.
 - A compact recording pill with input level, elapsed time, cancel and stop.
+- Customizable pill contents under Appearance: waveform, timer, recording dot, cancel/stop buttons and status labels. The Minimal preset shows the waveform while recording and a loading circle while working. Important error and copy instructions remain visible.
 - Automatic paste, or **Command–V** for manual paste.
 - Onboarding with permission recovery and an in-app practice step.
 - System, Light and Dark themes, seven accent colors and top or bottom pill placement.
