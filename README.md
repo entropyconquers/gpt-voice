@@ -49,6 +49,7 @@ If macOS shows a verification warning, ignore it and open **System Settings → 
 
 - A configurable global shortcut. The default is **Control–Option–Space**.
 - A compact recording pill with input level, elapsed time, cancel and stop.
+- A microphone picker under Preferences, with System Default and available inputs. A disconnected choice stays saved and visible; new recordings use System Default until it reconnects.
 - Automatic paste, or **Command–V** for manual paste.
 - Onboarding with permission recovery and an in-app practice step.
 - System, Light and Dark themes, seven accent colors and top or bottom pill placement.
