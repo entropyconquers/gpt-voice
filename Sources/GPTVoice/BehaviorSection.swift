@@ -16,6 +16,7 @@ struct BehaviorSection: View {
 
     var body: some View {
         SettingsGroup {
+            MicrophonePicker(model: model)
             SettingsRow(title: "Paste automatically",
                         detail: model.accessibilityTrusted ? nil : "Needs Accessibility. Until then, text is copied.") {
                 AppToggle(label: "Paste automatically",

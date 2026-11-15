@@ -1,5 +1,14 @@
 # Troubleshooting
 
+## Choose a microphone
+
+In **Settings → Preferences → Microphone**, choose **System Default** or a named input.
+This changes only GPT Voice's input, not the Mac's sound settings. The choice is saved
+across launches. If it disconnects, it remains in the picker as unavailable, and new
+recordings use System Default. Reconnecting it restores the preference for the next recording.
+Input changes apply to new recordings. If a device fails during a recording, Retry can
+transcribe the audio captured so far; start a new recording to use the default input.
+
 ## Sign-in
 
 Install [Codex CLI](https://developers.openai.com/codex/cli/) before starting browser sign-in.

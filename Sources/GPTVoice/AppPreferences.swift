@@ -6,6 +6,8 @@ import Foundation
 final class AppPreferences: ObservableObject {
     private enum Key {
         static let hotkey = "hotkey"
+        static let preferredMicrophoneUID = "preferredMicrophoneUID"
+        static let preferredMicrophoneName = "preferredMicrophoneName"
         static let automaticPaste = "automaticPaste"
         static let soundCues = "soundCues"
         static let onboardingCompleted = "onboardingCompleted"
@@ -32,6 +34,14 @@ final class AppPreferences: ObservableObject {
     }
 
     private let defaults: UserDefaults
+
+    @Published var preferredMicrophoneUID: String {
+        didSet { defaults.set(preferredMicrophoneUID, forKey: Key.preferredMicrophoneUID) }
+    }
+
+    @Published var preferredMicrophoneName: String {
+        didSet { defaults.set(preferredMicrophoneName, forKey: Key.preferredMicrophoneName) }
+    }
 
     @Published var hotkey: HotkeySpec {
         didSet {
@@ -61,6 +71,8 @@ final class AppPreferences: ObservableObject {
         ])
         let stored = defaults.data(forKey: Key.hotkey).flatMap { try? JSONDecoder().decode(HotkeySpec.self, from: $0) }
         hotkey = stored.flatMap { $0.isValid ? $0 : nil } ?? .default
+        preferredMicrophoneUID = defaults.string(forKey: Key.preferredMicrophoneUID) ?? ""
+        preferredMicrophoneName = defaults.string(forKey: Key.preferredMicrophoneName) ?? ""
         automaticPaste = defaults.bool(forKey: Key.automaticPaste)
         soundCues = defaults.bool(forKey: Key.soundCues)
         onboardingCompleted = defaults.bool(forKey: Key.onboardingCompleted)

@@ -15,6 +15,7 @@ final class AppModel: NSObject, ObservableObject {
     @Published private(set) var cliAvailable = CodexAuthentication.cliAvailable
     @Published private(set) var authError: String?
     @Published private(set) var microphone = PermissionStatus(AudioCapture.microphoneStatus)
+    @Published private(set) var inputDevices: [AudioInputDevice] = []
     @Published private(set) var accessibilityTrusted = AccessibilityPermission.check()
     @Published private(set) var hotkeyError: String?
     /// True when the last shortcut failed because a macOS shortcut, such as Spotlight, owns it.
@@ -31,6 +32,8 @@ final class AppModel: NSObject, ObservableObject {
     @Published private(set) var isPracticeSession = false
 
     private let audio: AudioCapture
+    private let availableInputDevices: () -> [AudioInputDevice]
+    private var inputDeviceMonitor: AudioInputDeviceMonitor?
     private let paste: PasteCoordinator
     private let transcribeAudio: @Sendable (URL) async throws -> String
     private var shortcut: GlobalShortcut?
@@ -47,15 +50,18 @@ final class AppModel: NSObject, ObservableObject {
 
     init(preferences: AppPreferences? = nil, pasteboard: NSPasteboard? = nil,
          history: TranscriptionHistory? = nil,
+         inputDeviceProvider: AudioInputDeviceProvider? = nil,
          transcribeAudio: @escaping @Sendable (URL) async throws -> String = {
              try await TranscriptionClient().transcribe(file: $0)
          }) {
         self.preferences = preferences ?? AppPreferences()
+        self.availableInputDevices = inputDeviceProvider?.snapshot ?? AudioInputDevices.available
         self.history = history ?? TranscriptionHistory()
         self.transcribeAudio = transcribeAudio
         audio = AudioCapture()
         paste = PasteCoordinator(pasteboard: pasteboard ?? .general)
         super.init()
+        inputDeviceMonitor = AudioInputDeviceMonitor { [weak self] in self?.refreshInputDevices() }
         audio.onMaximumDuration = { [weak self] url in self?.captureEnded(url: url) }
         audio.onFailure = { [weak self] error, url in self?.captureFailed(error, url: url) }
         shortcut = GlobalShortcut { [weak self] in self?.receiveGlobalShortcut() }
@@ -69,6 +75,10 @@ final class AppModel: NSObject, ObservableObject {
     var canRetry: Bool { failedAudio != nil && !phase.isBusy }
     var canChangeSettings: Bool { !phase.isBusy && !paste.isLeasePending }
     var hotkey: HotkeySpec { preferences.hotkey }
+    var preferredMicrophoneUnavailable: Bool {
+        !preferences.preferredMicrophoneUID.isEmpty &&
+            AudioInputDevices.resolvedUID(preferences.preferredMicrophoneUID, devices: inputDevices) == nil
+    }
     var commandSpaceIsActive: Bool {
         hotkey == .commandSpace && shortcut?.current == .commandSpace && hotkeyError == nil
     }
@@ -100,6 +110,7 @@ final class AppModel: NSObject, ObservableObject {
 
     /// Rechecks sign-in, permissions, and login item status without prompting.
     func refreshStatus() {
+        refreshInputDevices()
         cliAvailable = CodexAuthentication.cliAvailable
         if signInTask == nil { connection = ConnectionStatus.current() }
         microphone = PermissionStatus(AudioCapture.microphoneStatus)
@@ -131,6 +142,7 @@ final class AppModel: NSObject, ObservableObject {
 
     /// Stops all work and deletes every owned audio file. Call on quit.
     func cleanup() {
+        inputDeviceMonitor?.stop()
         permissionRefresh?.cancel()
         permissionRefresh = nil
         endShortcutTest()
@@ -191,7 +203,7 @@ final class AppModel: NSObject, ObservableObject {
             guard current == generation else { return }
             if !isPracticeSession { paste.beginSession() }
             do {
-                try await audio.start()
+                try await audio.start(preferredDeviceUID: preferences.preferredMicrophoneUID)
             } catch let error as AudioCaptureError {
                 guard current == generation else { return }
                 microphone = PermissionStatus(AudioCapture.microphoneStatus)
@@ -476,6 +488,26 @@ final class AppModel: NSObject, ObservableObject {
     }
 
     // MARK: Behavior
+
+    func refreshInputDevices() {
+        let devices = availableInputDevices()
+        if inputDevices != devices { inputDevices = devices }
+        if let preferred = devices.first(where: { $0.uid == preferences.preferredMicrophoneUID }),
+           preferences.preferredMicrophoneName != preferred.name {
+            preferences.preferredMicrophoneName = preferred.name
+        }
+    }
+
+    func setPreferredMicrophone(_ uid: String) {
+        guard canChangeSettings else { return }
+        if uid.isEmpty {
+            preferences.preferredMicrophoneUID = ""
+            preferences.preferredMicrophoneName = ""
+        } else if let device = inputDevices.first(where: { $0.uid == uid }) {
+            preferences.preferredMicrophoneUID = device.uid
+            preferences.preferredMicrophoneName = device.name
+        }
+    }
 
     func setAutomaticPaste(_ value: Bool) {
         guard canChangeSettings else { return }

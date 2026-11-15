@@ -24,6 +24,8 @@ Normal Mac backups can include this file. Audio is not kept in history.
 ChatGPT's handling of uploaded audio is subject to your account settings and OpenAI's policies.
 
 Microphone access permits recording after you start dictation.
+The preferred microphone's device identifier and display name are stored only in local preferences.
+Device discovery does not open the microphone, and device identifiers are not sent to ChatGPT.
 Accessibility access permits automatic paste. You can decline it and paste with Command–V instead.
 The app rechecks permissions when you return from System Settings.
 

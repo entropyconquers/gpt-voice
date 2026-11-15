@@ -13,6 +13,8 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
     var onFailure: ((AudioCaptureError, URL?) -> Void)?
 
     private var recorder: AVAudioRecorder?
+    private var deviceRecorder: DeviceAudioRecorder?
+    private var deviceRecordingURL: URL?
     private var directory: URL?
     private var ownedFiles: Set<URL> = []
     private var generation = 0
@@ -22,13 +24,14 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
         AVCaptureDevice.authorizationStatus(for: .audio)
     }
 
-    var isRecording: Bool { recorder != nil }
+    var isRecording: Bool { recorder != nil || deviceRecorder != nil }
 
     /// Seconds recorded so far, or zero when idle.
-    var elapsed: TimeInterval { recorder?.currentTime ?? 0 }
+    var elapsed: TimeInterval { deviceRecorder?.elapsed ?? recorder?.currentTime ?? 0 }
 
     /// Normalized input level from 0 to 1, or zero when idle. For UI only.
     func currentLevel() -> Float {
+        if let deviceRecorder { return deviceRecorder.level() }
         guard let recorder else { return 0 }
         recorder.updateMeters()
         let decibels = recorder.averagePower(forChannel: 0)
@@ -36,8 +39,8 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
     }
 
     /// Asks for microphone access on first use, then starts recording.
-    func start() async throws {
-        guard recorder == nil else { throw AudioCaptureError.alreadyRecording }
+    func start(preferredDeviceUID: String = "") async throws {
+        guard !isRecording else { throw AudioCaptureError.alreadyRecording }
         generation += 1
         let startGeneration = generation
         switch Self.microphoneStatus {
@@ -47,9 +50,39 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
             guard granted else { throw AudioCaptureError.microphoneDenied }
         default: throw AudioCaptureError.microphoneDenied
         }
-        guard startGeneration == generation, recorder == nil else { throw AudioCaptureError.cancelled }
+        guard startGeneration == generation, !isRecording else { throw AudioCaptureError.cancelled }
 
         let url = try makeFileURL()
+        if !preferredDeviceUID.isEmpty,
+           let uid = AudioInputDevices.resolvedUID(preferredDeviceUID, devices: AudioInputDevices.available()) {
+            ownedFiles.insert(url)
+            do {
+                let selected = try DeviceAudioRecorder(url: url, deviceUID: uid)
+                deviceRecorder = selected
+                deviceRecordingURL = url
+                selected.onFailure = { [weak self, weak selected] in
+                    guard let self, let selected, self.deviceRecorder === selected else { return }
+                    self.finishDeviceRecording(successfully: false)
+                }
+                selected.onMaximumDuration = { [weak self, weak selected] in
+                    guard let self, let selected, self.deviceRecorder === selected else { return }
+                    self.finishDeviceRecording(successfully: true)
+                }
+                try selected.start()
+                return
+            } catch {
+                deviceRecorder?.stop()
+                deviceRecorder = nil
+                deviceRecordingURL = nil
+                remove(url)
+                // An unplug between discovery and startup also follows System Default.
+                guard AudioInputDevices.resolvedUID(uid, devices: AudioInputDevices.available()) == nil else { throw error }
+            }
+        }
+        try startDefaultRecorder(url: url)
+    }
+
+    private func startDefaultRecorder(url: URL) throws {
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatLinearPCM,
             AVSampleRateKey: 24_000,
@@ -77,6 +110,13 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
 
     /// Stops recording and returns the finished file. The caller removes it with `remove(_:)`.
     func stop() throws -> URL {
+        if let deviceRecorder, let url = deviceRecordingURL {
+            deviceRecorder.stop()
+            self.deviceRecorder = nil
+            deviceRecordingURL = nil
+            generation += 1
+            return url
+        }
         guard let recorder else { throw AudioCaptureError.notRecording }
         stoppingByRequest = true
         recorder.stop()
@@ -88,6 +128,12 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
     /// Stops any recording, including a pending permission request, and deletes its file.
     func cancel() {
         generation += 1
+        if let deviceRecorder {
+            deviceRecorder.stop()
+            self.deviceRecorder = nil
+            if let deviceRecordingURL { remove(deviceRecordingURL) }
+            deviceRecordingURL = nil
+        }
         guard let recorder else { return }
         stoppingByRequest = true
         recorder.stop()
@@ -123,6 +169,12 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
             directory = url
         }
         return directory!.appendingPathComponent("\(UUID().uuidString).wav")
+    }
+
+    private func finishDeviceRecording(successfully: Bool) {
+        guard deviceRecorder != nil, let url = try? stop() else { return }
+        if successfully { onMaximumDuration?(url) }
+        else { onFailure?(.deviceFailed, ownedFiles.contains(url) ? url : nil) }
     }
 
     private func recorderFinished(_ finished: AVAudioRecorder, successfully: Bool) {
