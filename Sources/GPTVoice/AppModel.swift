@@ -521,12 +521,17 @@ final class AppModel: NSObject, ObservableObject {
     /// Transcribes and delivers one file. Uses the current generation to reject stale results.
     private func transcribe(_ url: URL) {
         let current = generation
+        let isLocalRecording = audio.owns(url)
         activeAudio = url
         phase = .transcribing
         operation = Task {
             let text: String
             do {
-                text = try await transcribeAudio(url)
+                if isLocalRecording {
+                    text = try await RecordingCompression.transcribe(url, using: transcribeAudio)
+                } else {
+                    text = try await transcribeAudio(url)
+                }
             } catch {
                 guard current == generation, !Task.isCancelled else { return }
                 activeAudio = nil
