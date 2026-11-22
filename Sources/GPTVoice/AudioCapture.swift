@@ -95,6 +95,8 @@ final class AudioCapture: NSObject, AVAudioRecorderDelegate {
         remove(recorder.url)
     }
 
+    func owns(_ url: URL) -> Bool { ownedFiles.contains(url) }
+
     /// Deletes one owned audio file, for example after a successful transcription.
     func remove(_ url: URL) {
         guard ownedFiles.remove(url) != nil else { return }
